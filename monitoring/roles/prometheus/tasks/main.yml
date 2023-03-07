@@ -100,3 +100,4 @@
     group: prometheus
   notify: restart_prometheus
   when: agent is defined
+  
