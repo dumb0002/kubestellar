@@ -18,13 +18,13 @@ git clone -b dev-env https://github.com/dumb0002/edge-mc.git
 2. Deploy the kcp-edge Poc2023q1 example stage1:
 
 ```
-./install_edge-mc.sh
+sh install_edge-mc.sh
 ```
 
 3. Delete the kcp-edge Poc2023q1 example stage1:
 
 
 ```
-./delete_edge-mc.sh
+sh delete_edge-mc.sh
 ```
 
