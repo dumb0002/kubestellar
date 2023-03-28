@@ -7,7 +7,7 @@ spec:
       workspaces:
         - name: root
           workspaces:
-            - name: inv1
+            - name: imw
               others:
                 - name: sync-target-f
                   source:
