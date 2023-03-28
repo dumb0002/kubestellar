@@ -4,6 +4,7 @@
    - ko: https://ko.build/install/  (e.g., `brew install ko`)
    - gcc
    - jq
+   - make
    - go (version expected 1.19 or higher)
    - kind
    - kubectl  
