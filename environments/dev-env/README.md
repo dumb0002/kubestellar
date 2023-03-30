@@ -89,48 +89,48 @@ kubectl ws tree
 
 For workload common:
 ```
-$ kubectl ws wmw-c
+kubectl ws wmw-c
 Current workspace is "root:wmw-c" (type root:universal).
 
-$ kubectl get ns
+kubectl get ns
 NAME          STATUS   AGE
 commonstuff   Active   99s
 default       Active   104s
 
-$ kubectl -n commonstuff get deploy
+kubectl -n commonstuff get deploy
 NAME      READY   UP-TO-DATE   AVAILABLE   AGE
 commond   0/0     0            0           111s
 
-$ kubectl -n commonstuff get configmaps
+kubectl -n commonstuff get configmaps
 NAME               DATA   AGE
 httpd-htdocs       1      117s
 kube-root-ca.crt   1      117s
 
-$ kubectl get SinglePlacementSlice
+kubectl get SinglePlacementSlice
 NAME               AGE
 edge-placement-c   111s
 ```
 
 For workload special:
 ```
-$ kubectl ws wmw-s
+kubectl ws wmw-s
 Current workspace is "root:wmw-s" (type root:universal).
 
-$ kubectl get ns
+kubectl get ns
 NAME           STATUS   AGE
 default        Active   5m1s
 specialstuff   Active   4m57s
 
-$ kubectl -n specialstuff  get deploy
+kubectl -n specialstuff  get deploy
 NAME       READY   UP-TO-DATE   AVAILABLE   AGE
 speciald   0/0     0            0           5m29s
 
-$ kubectl -n specialstuff  get configmaps
+kubectl -n specialstuff  get configmaps
 NAME               DATA   AGE
 httpd-htdocs       1      5m35s
 kube-root-ca.crt   1      5m35s
 
-$ kubectl get SinglePlacementSlice
+kubectl get SinglePlacementSlice
 NAME               AGE
 edge-placement-s   5m26s
 ```
