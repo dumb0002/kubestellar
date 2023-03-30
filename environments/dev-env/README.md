@@ -78,10 +78,10 @@ You should see an ouput similar to the one below:
 kubectl ws tree
 .
 └── root
-    ├── 2o4zhi672opeyu82-mb-187b7af9-760d-4632-a9ef-e1ef5d1308fe
-    ├── 2o4zhi672opeyu82-mb-3efef391-7e2d-4bb9-84f0-7e675779237a
     ├── compute
     ├── espw
+    │   ├── 2sw7hflwls2yqcad-mb-7f38a3a2-b90f-4f68-a00d-44ba0b34e366
+    │   └── 2sw7hflwls2yqcad-mb-a57adcc9-b878-4891-802c-e4b75abf2c3b
     ├── imw
     ├── wmw-c
     └── wmw-s

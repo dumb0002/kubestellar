@@ -100,6 +100,7 @@ echo "Started deploying maibox-controller ...."
 echo "****************************************"
 cd ../../..
 
+kubectl ws root:espw
 go run ./cmd/mailbox-controller --inventory-context=shard-main-root -v=2 >& mailbox-controller-log.txt &
 echo "****************************************"
 echo "Finished deploying maibox-controller .... (log file: mailbox-controller-log.txt)"
