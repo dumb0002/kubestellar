@@ -1,13 +1,18 @@
 ## Quickstart
 
 ## Required Packages:
-   - ko: https://ko.build/install/  (e.g., `brew install ko`)
+   - ko: https://ko.build/install/ 
    - gcc
    - jq
    - make
-   - go (version expected 1.19 or higher)
+   - go (version expected 1.19)
    - kind
    - kubectl  
+
+For Mac OS:
+```
+brew install ko gcc jq make go kind kubectl
+```
 
 ## 
 1. Clone this repo:
@@ -16,10 +21,14 @@
 git clone -b dev-env https://github.com/dumb0002/edge-mc.git
 ```
 
-2. Deploy the kcp-edge Poc2023q1 example stage1:
+2. Experiment with the kcp-edge 2023q1 PoC example scenarios at: https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/
+
+## Stage 1:
+
+Stage 1 creates the infrastructure and the edge service provider workspace and lets that react to the inventory
 
 ```
-sh install_edge-mc.sh
+sh install_edge-mc.sh --stage 1
 ```
 
 You should see an ouput similar to the one below:
@@ -28,10 +37,10 @@ You should see an ouput similar to the one below:
 kubectl ws tree
 .
 └── root
-    ├── 1xvliuer0ueqb4wj-mb-9fe29fd1-fdcf-40d1-b87a-2aaf759f0401
-    ├── 1xvliuer0ueqb4wj-mb-a3e8f741-bdb4-477e-8844-4518ac1ce082
+    ├── 2fhjv0zoqmrc4n37-mb-2c15aab9-f3be-4fdb-b886-991a82b92c4a
+    ├── 2fhjv0zoqmrc4n37-mb-c91e920d-9ce1-49dc-a6dc-c15a4caef89c
     ├── compute
-    ├── edge
+    ├── espw
     └── imw
 ```
 
@@ -55,10 +64,80 @@ florin
 guilder
 ```
 
-3. Delete the kcp-edge Poc2023q1 example stage1:
+## Stage 2:
 
+Stage 2 creates two workloads, called “common” and “special” and in response to each EdgePlacement, the edge scheduler creates the corresponding SinglePlacementSlice object.
 
 ```
-sh delete_edge-mc.sh
+sh install_edge-mc.sh --stage 2
+```
+
+You should see an ouput similar to the one below:
+
+```
+kubectl ws tree
+.
+└── root
+    ├── 2o4zhi672opeyu82-mb-187b7af9-760d-4632-a9ef-e1ef5d1308fe
+    ├── 2o4zhi672opeyu82-mb-3efef391-7e2d-4bb9-84f0-7e675779237a
+    ├── compute
+    ├── espw
+    ├── imw
+    ├── wmw-c
+    └── wmw-s
+```
+
+For workload common:
+```
+$ kubectl ws wmw-c
+Current workspace is "root:wmw-c" (type root:universal).
+
+$ kubectl get ns
+NAME          STATUS   AGE
+commonstuff   Active   99s
+default       Active   104s
+
+$ kubectl -n commonstuff get deploy
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+commond   0/0     0            0           111s
+
+$ kubectl -n commonstuff get configmaps
+NAME               DATA   AGE
+httpd-htdocs       1      117s
+kube-root-ca.crt   1      117s
+
+$ kubectl get SinglePlacementSlice
+NAME               AGE
+edge-placement-c   111s
+```
+
+For workload special:
+```
+$ kubectl ws wmw-s
+Current workspace is "root:wmw-s" (type root:universal).
+
+$ kubectl get ns
+NAME           STATUS   AGE
+default        Active   5m1s
+specialstuff   Active   4m57s
+
+$ kubectl -n specialstuff  get deploy
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+speciald   0/0     0            0           5m29s
+
+$ kubectl -n specialstuff  get configmaps
+NAME               DATA   AGE
+httpd-htdocs       1      5m35s
+kube-root-ca.crt   1      5m35s
+
+$ kubectl get SinglePlacementSlice
+NAME               AGE
+edge-placement-s   5m26s
+```
+
+3. Delete a kcp-edge Poc2023q1 example stage:
+
+```
+sh delete_edge-mc.sh --stage <number (e.g, 1 or 2)>
 ```
 
