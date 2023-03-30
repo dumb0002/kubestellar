@@ -37,11 +37,11 @@ You should see an ouput similar to the one below:
 kubectl ws tree
 .
 └── root
-    ├── 2fhjv0zoqmrc4n37-mb-2c15aab9-f3be-4fdb-b886-991a82b92c4a
-    ├── 2fhjv0zoqmrc4n37-mb-c91e920d-9ce1-49dc-a6dc-c15a4caef89c
     ├── compute
     ├── espw
-    └── imw
+    │   ├── 2sw7hflwls2yqcad-mb-7f38a3a2-b90f-4f68-a00d-44ba0b34e366
+    │   └── 2sw7hflwls2yqcad-mb-a57adcc9-b878-4891-802c-e4b75abf2c3b
+    ├── imw
 ```
 
 ```
