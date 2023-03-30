@@ -24,12 +24,16 @@ git clone -b dev-env https://github.com/dumb0002/edge-mc.git
 2. Experiment with the kcp-edge 2023q1 PoC example scenarios at: https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/
 
 
-## Stage 2:
+## Stage 3:
 
-Stage 2 creates two workloads, called “common” and “special” and in response to each EdgePlacement, the edge scheduler creates the corresponding SinglePlacementSlice object.
+Stage 3 creates the following components:
+
+-  the infrastructure and the edge service provider workspace and lets that react to the inventory
+-  two workloads, called “common” and “special” and in response to each EdgePlacement, the edge scheduler creates the corresponding SinglePlacementSlice object.
+-  the placement translator reacts to the EdgePlacement objects in the workload management workspaces
 
 ```
-sh install_edge-mc.sh --stage 2
+sh install_edge-mc.sh --stage 3
 ```
 
 You should see an ouput similar to the one below:
@@ -113,6 +117,26 @@ kube-root-ca.crt   1      5m35s
 kubectl get SinglePlacementSlice
 NAME               AGE
 edge-placement-s   5m26s
+```
+
+For placement translator:
+```
+kubectl ws wmw-c
+Current workspace is "root:wmw-c" (type root:universal).
+
+kubectl get EdgePlacement
+NAME               AGE
+edge-placement-c   91s
+
+kubectl delete EdgePlacement edge-placement-c
+edgeplacement.edge.kcp.io "edge-placement-c" deleted
+```
+For placement translator logs:
+```
+:WorkspaceScheduled Status:True Severity: LastTransitionTime:2023-03-30 17:46:42 -0400 EDT Reason: Message:}] Initializers:[]}}
+I0330 17:47:01.732064   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-placement-c" val=map[{APIGroup: Resource:namespaces Name:commonstuff}:{APIVersion:v1 IncludeNamespaceObject:false}]
+I0330 17:47:01.732364   64918 main.go:119] "Receive" key="211ieqpc4xyydw2w:edge-placement-s" val=map[{APIGroup: Resource:namespaces Name:specialstuff}:{APIVersion:v1 IncludeNamespaceObject:false}]
+I0330 17:48:08.042551   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-placement-c" val=map[]
 ```
 
 3. Delete a kcp-edge Poc2023q1 example stage:

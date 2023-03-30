@@ -61,6 +61,8 @@ if [ $stage == 1 ]; then
     kubectl kcp playground start -f test/kubectl-kcp-playground/examples/kcp-edge/poc2023q1-stage1.yml >& kcp-playground-log.txt &
 elif [ $stage == 2 ]; then
     kubectl kcp playground start -f test/kubectl-kcp-playground/examples/kcp-edge/poc2023q1-stage2.yml >& kcp-playground-log.txt &
+elif [ $stage == 3 ]; then
+    kubectl kcp playground start -f test/kubectl-kcp-playground/examples/kcp-edge/poc2023q1-stage2.yml >& kcp-playground-log.txt &
 fi 
 
 ####################################################
@@ -118,6 +120,20 @@ if [ $stage != 1 ]; then
     echo "****************************************"
     echo "Finished deploying edge scheduler...."
     echo "****************************************"
+fi
+
+
+if [ $stage != 1 ]; then 
+    # (8): Start the Placement Translator
+    echo "*****************************************"
+    echo "Started deploying placement translator.."
+    echo "*****************************************"
+    sleep 10
+    kubectl ws root:espw
+    go run ./cmd/placement-translator --allclusters-context  "shard-main-system:admin" >& placement-translator-log.txt &
+    echo "*****************************************"
+    echo "Finished deploying placement translator.."
+    echo "*****************************************"
 fi
 
 echo "KCP-Edge dev-env successfully started"
