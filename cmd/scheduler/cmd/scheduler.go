@@ -112,8 +112,8 @@ func Run(ctx context.Context, options *scheduleroptions.Options) error {
 		clientcmd.NewDefaultClientConfigLoadingRules(),
 		&clientcmd.ConfigOverrides{
 			Context: clientcmdapi.Context{
-				Cluster:  "root",
-				AuthInfo: "kcp-admin",
+				Cluster:  "shard-main-root",
+				AuthInfo: "shard-main-kcp-admin",
 			},
 		},
 	).ClientConfig()
@@ -148,8 +148,8 @@ func Run(ctx context.Context, options *scheduleroptions.Options) error {
 	loadingRules.ExplicitPath = options.KcpKubeconfig
 	configOverrides := &clientcmd.ConfigOverrides{
 		Context: clientcmdapi.Context{
-			Cluster:  "base",
-			AuthInfo: "shard-admin",
+			Cluster:  "shard-main-base",
+			AuthInfo: "shard-main-shard-admin",
 		},
 	}
 	controllerConfig, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides).ClientConfig()
