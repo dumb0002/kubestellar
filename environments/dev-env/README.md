@@ -121,7 +121,7 @@ edge-placement-s   5m26s
 
 For placement translator:
 ```
-kubectl ws wmw-c
+kubectl ws root:wmw-c
 Current workspace is "root:wmw-c" (type root:universal).
 
 kubectl get EdgePlacement
