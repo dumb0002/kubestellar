@@ -138,6 +138,6 @@ edge-placement-s   5m26s
 3. Delete a kcp-edge Poc2023q1 example stage:
 
 ```
-sh delete_edge-mc.sh --stage <number (e.g, 1 or 2)>
+sh delete_edge-mc.sh
 ```
 
