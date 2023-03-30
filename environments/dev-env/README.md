@@ -69,7 +69,7 @@ guilder
 
 For workload common:
 ```
-kubectl ws wmw-c
+kubectl ws root:wmw-c
 Current workspace is "root:wmw-c" (type root:universal).
 
 kubectl get ns
@@ -93,7 +93,7 @@ edge-placement-c   111s
 
 For workload special:
 ```
-kubectl ws wmw-s
+kubectl ws root:wmw-s
 Current workspace is "root:wmw-s" (type root:universal).
 
 kubectl get ns

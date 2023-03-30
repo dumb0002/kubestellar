@@ -120,6 +120,7 @@ if [ $stage != 1 ]; then
     echo "****************************************"
 fi
 
+kubectl ws root
 echo "KCP-Edge dev-env successfully started"
 echo "To start using the KCP-Edge dev-env: "
 echo "   export KUBECONFIG=kcp/.kcp-playground/playground.kubeconfig"
