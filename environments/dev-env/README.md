@@ -131,7 +131,7 @@ edge-placement-c   91s
 kubectl delete EdgePlacement edge-placement-c
 edgeplacement.edge.kcp.io "edge-placement-c" deleted
 ```
-For placement translator logs:
+Placement translator logs:
 ```
 :WorkspaceScheduled Status:True Severity: LastTransitionTime:2023-03-30 17:46:42 -0400 EDT Reason: Message:}] Initializers:[]}}
 I0330 17:47:01.732064   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-placement-c" val=map[{APIGroup: Resource:namespaces Name:commonstuff}:{APIVersion:v1 IncludeNamespaceObject:false}]
