@@ -21,7 +21,13 @@ brew install ko gcc jq make go kind kubectl
 git clone -b dev-env https://github.com/dumb0002/edge-mc.git
 ```
 
-2. Experiment with the kcp-edge 2023q1 PoC example scenarios at: https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/
+2. Change into the following directory path: `edge-mc/environments/dev-env`
+
+```
+  cd edge-mc/environments/dev-env
+```
+
+3. Experiment with the kcp-edge 2023q1 PoC example scenarios at: https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/
 
 
 ## Stage 3:
@@ -139,7 +145,7 @@ I0330 17:47:01.732364   64918 main.go:119] "Receive" key="211ieqpc4xyydw2w:edge-
 I0330 17:48:08.042551   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-placement-c" val=map[]
 ```
 
-3. Delete a kcp-edge Poc2023q1 example stage:
+4. Delete a kcp-edge Poc2023q1 example stage:
 
 ```
 sh delete_edge-mc.sh
