@@ -37,8 +37,9 @@ fi
 # Deleting kind clusters
 for c in ${clusters[@]}
 do 
-  if kind get clusters | grep $c; then
-     kind delete cluster --name $c
+  if [ $(kind get clusters | grep $c) > /dev/null 2>&1 ]; then
+     echo "kind cluster $c already exists - deleting it ...."
+     kind delete cluster --name $c > /dev/null 2>&1
   fi
 done
 
