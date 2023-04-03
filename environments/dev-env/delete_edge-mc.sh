@@ -12,9 +12,9 @@ done
 # Deleting kind clusters
 for c in ${clusters[@]}
 do 
-  if kind get clusters | grep $c; then
-     kind delete cluster --name $c
-     echo "Deleting kind cluster: $c"
+  if [ $(kind get clusters | grep $c) > /dev/null 2>&1 ]; then
+     echo "Deleting kind cluster $c ...."
+     kind delete cluster --name $c > /dev/null 2>&1
   fi
 done
 
