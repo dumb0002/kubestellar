@@ -29,11 +29,13 @@ git clone -b dev-env https://github.com/dumb0002/edge-mc.git
 
 3. Experiment with the kcp-edge 2023q1 PoC example scenarios at: https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/
 
-NB: if you're using a macOS, you may see pop-us messages similar to the one below while deploying kcp-edge -- you can accept it or configure your firewall to suppress them by adding our kcp-edge components to the list of permitted apps.
+NB: if you're using a macOS, you may see pop-us messages similar to the one below while deploying kcp-edge: 
 
 ```
 Do you want the application “kcp” to accept incoming network connections?
 ```
+
+You can accept it or configure your firewall to suppress them by adding our kcp-edge components to the list of permitted apps.
 
 ## Stage 3:
 
