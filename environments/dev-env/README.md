@@ -11,7 +11,7 @@
 
 For Mac OS:
 ```
-brew install ko gcc jq make go kind kubectl
+brew install ko gcc jq make go@1.19 kind kubectl
 ```
 
 ## 
