@@ -8,13 +8,19 @@
    - kind
    - kubectl  
 
-For Mac OS:
+For Mac OS only:
 ```bash
   brew install ko gcc jq make go@1.19 kind kubectl
 ```
 
+For either Ubuntu or Mac OS - run the following script to install the required packages:
+
+```bash
+  ./install_req.sh
+```
+
 ## Quickstart
-## 
+
 1. Clone this repo:
 
 ```bash
