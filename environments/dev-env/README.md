@@ -10,7 +10,7 @@
 
 For Mac OS:
 ```bash
-brew install ko gcc jq make go@1.19 kind kubectl
+  brew install ko gcc jq make go@1.19 kind kubectl
 ```
 
 ## Quickstart
@@ -18,7 +18,7 @@ brew install ko gcc jq make go@1.19 kind kubectl
 1. Clone this repo:
 
 ```bash
-git clone -b dev-env https://github.com/dumb0002/edge-mc.git
+  git clone -b dev-env https://github.com/dumb0002/edge-mc.git
 ```
 
 2. Change into the following directory path: `edge-mc/environments/dev-env`
@@ -32,7 +32,7 @@ git clone -b dev-env https://github.com/dumb0002/edge-mc.git
 NB: if you're using a macOS, you may see pop-us messages similar to the one below while deploying kcp-edge: 
 
 ```bash
-Do you want the application “kcp” to accept incoming network connections?
+  Do you want the application “kcp” to accept incoming network connections?
 ```
 
 You can accept it or configure your firewall to suppress them by adding our kcp-edge components to the list of permitted apps.
@@ -48,7 +48,7 @@ Stage 3 creates the following components (more details: https://docs.kcp-edge.io
 -  the placement translator reacts to the EdgePlacement objects in the workload management workspaces
 
 ```bash
-./install_edge-mc.sh --stage 3
+  ./install_edge-mc.sh --stage 3
 ```
 
 You should see an ouput similar to the one below:
