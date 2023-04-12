@@ -1,5 +1,3 @@
-## Quickstart
-
 ## Required Packages:
    - ko: https://ko.build/install/ 
    - gcc
@@ -15,6 +13,7 @@ For Mac OS:
 brew install ko gcc jq make go@1.19 kind kubectl
 ```
 
+## Quickstart
 ## 
 1. Clone this repo:
 
@@ -189,9 +188,52 @@ This will create the following components:
         └── wmw-1
 ```
 
-3. Deploy your own workload
+3. Deploy your own workload: 
 
- i) populate inventory service workspace:
- b) populate workload managed workspace: 
+ * populate inventory service workspace (imw):
+    1. Enter the imw:
+
+    ```
+      kubectl ws root:imw-1
+    ```
+    
+    2. Create a SyncTarget object to represent the florin cluster. For example:
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: workload.kcp.io/v1alpha1
+kind: SyncTarget
+metadata:
+  name: sync-target-f
+  labels:
+    example: si
+    extended: non
+spec:
+  cells:
+    foo: bar
+EOF
+```
+
+    3. Create a Location object describing the florin cluster. For example:
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: scheduling.kcp.io/v1alpha1
+kind: Location
+metadata:
+  name: location-f
+  labels:
+    env: prod
+spec:
+  resource: {group: workload.kcp.io, version: v1alpha1, resource: synctargets}
+  instanceSelector:
+    matchLabels: {"example":"si", "extended":"non"}
+EOF
+```
+
+ * populate workload managed workspace: 
+
+
+
 
 Explains what happens the steps that edge mc does or the actions it implements
