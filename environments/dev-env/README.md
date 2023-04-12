@@ -207,45 +207,45 @@ user      2929   0.0  0.2 34922964  69724 s004  S     3:22PM   0:03.74 go run ./
 #### 3. Deploy your own workload: 
 
  * Populate the `imw`:
-    * Step-1: Enter the target workspace: `imw`
+    * Step-1: enter the target workspace: `imw`
 
-```bash
-  kubectl ws root:imw-1
-```
+      ```bash
+          kubectl ws root:imw-1
+      ```
     
-    2. Create a SyncTarget object to represent the florin cluster. For example:
+    * Step-2: create a SyncTarget object to represent the florin cluster. For example:
 
-```bash
-cat <<EOF | kubectl apply -f -
-apiVersion: workload.kcp.io/v1alpha1
-kind: SyncTarget
-metadata:
-  name: sync-target-f
-  labels:
-    example: si
-    extended: non
-spec:
-  cells:
-    foo: bar
-EOF
-```
+      ```bash
+      cat <<EOF | kubectl apply -f -
+      apiVersion: workload.kcp.io/v1alpha1
+      kind: SyncTarget
+      metadata:
+        name: sync-target-f
+        labels:
+          example: si
+          extended: non
+      spec:
+        cells:
+          foo: bar
+      EOF
+      ```
 
-   3. Create a Location object describing the florin cluster. For example:
+   * Step-3: create a Location object describing the florin cluster. For example:
 
-```bash
-cat <<EOF | kubectl apply -f -
-apiVersion: scheduling.kcp.io/v1alpha1
-kind: Location
-metadata:
-  name: location-f
-  labels:
-    env: prod
-spec:
-  resource: {group: workload.kcp.io, version: v1alpha1, resource: synctargets}
-  instanceSelector:
-    matchLabels: {"example":"si", "extended":"non"}
-EOF
-```
+      ```bash
+      cat <<EOF | kubectl apply -f -
+      apiVersion: scheduling.kcp.io/v1alpha1
+      kind: Location
+      metadata:
+        name: location-f
+        labels:
+          env: prod
+      spec:
+        resource: {group: workload.kcp.io, version: v1alpha1, resource: synctargets}
+        instanceSelector:
+          matchLabels: {"example":"si", "extended":"non"}
+      EOF
+     ```
 
 A location and synctarget object will be created:
 
