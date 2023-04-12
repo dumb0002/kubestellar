@@ -184,7 +184,7 @@ kind create cluster --name florin
 
 This will start `kcp` and create/deploy the following components:
 
-- 4 kcp workspaces: edge service provider workspace (espw), inventory management workspace (imw) and workload management workspace (wmw) under my-org workspace
+- 4 kcp workspaces: edge service provider workspace (`espw`), inventory management workspace (`imw`) and workload management workspace (`wmw`) under my-org workspace
 
 ```bash
 .
@@ -195,7 +195,7 @@ This will start `kcp` and create/deploy the following components:
     └── my-org
         └── wmw-1
 ```
-- 3 kcp-edge controllers: edge-scheduler, mailbox-controller and placement-translator
+- 3 kcp-edge controllers: [edge-scheduler](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/edge-scheduler/), mailbox-controller and placement-translator
 
 ```bash
 ps aux | grep -e mailbox-controller -e placement-translator -e cmd/scheduler/main.go
@@ -206,7 +206,7 @@ user      2929   0.0  0.2 34922964  69724 s004  S     3:22PM   0:03.74 go run ./
 
 3. Deploy your own workload: 
 
- * populate inventory service workspace (imw):
+ * Populate the `imw`:
     1. Enter the target workspace: `imw`
 
 ```bash
