@@ -207,7 +207,7 @@ user      2929   0.0  0.2 34922964  69724 s004  S     3:22PM   0:03.74 go run ./
 #### 3. Deploy your own workload: 
 
  * Populate the `imw`:
-    1. Enter the target workspace: `imw`
+    * Step-1: Enter the target workspace: `imw`
 
 ```bash
   kubectl ws root:imw-1
@@ -259,7 +259,7 @@ NAME                                       AGE
 synctarget.workload.kcp.io/sync-target-f   36s
 ```
 
-The mailbox-controller creates a mailbox workspaces for the newly created SyncTarget `sync-target-f`"
+The [mailbox-controller]((https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/mailbox-controller/) ) creates a mailbox workspaces for the newly created SyncTarget `sync-target-f`:
 
 ```bash
 kubectl ws root
@@ -276,7 +276,7 @@ kubectl ws tree
         └── wmw-1
 ```
 
- * Ppopulate the `wmw`: 
+ * Populate the `wmw`: 
 
 
  1. Enter the target workspace: `wmw-1`
