@@ -207,7 +207,7 @@ user      2929   0.0  0.2 34922964  69724 s004  S     3:22PM   0:03.74 go run ./
 #### 3. Deploy your own workload: 
 
  * Populate the `imw`:
-    * Step-1: enter the target workspace: `imw`
+    * Step-1: enter the target workspace:
 
       ```bash
           kubectl ws root:imw-1
@@ -247,34 +247,34 @@ user      2929   0.0  0.2 34922964  69724 s004  S     3:22PM   0:03.74 go run ./
       EOF
      ```
 
-A location and synctarget object will be created:
+      A location and synctarget object will be created:
 
-```bash
-kubectl get locations,synctargets
-NAME                                    RESOURCE      AVAILABLE   INSTANCES   LABELS   AGE
-location.scheduling.kcp.io/default      synctargets   0           1                    36s
-location.scheduling.kcp.io/location-f   synctargets   0           1                    25s
+      ```bash
+      kubectl get locations,synctargets
+      NAME                                    RESOURCE      AVAILABLE   INSTANCES   LABELS   AGE
+      location.scheduling.kcp.io/default      synctargets   0           1                    36s
+      location.scheduling.kcp.io/location-f   synctargets   0           1                    25s
 
-NAME                                       AGE
-synctarget.workload.kcp.io/sync-target-f   36s
-```
+      NAME                                       AGE
+      synctarget.workload.kcp.io/sync-target-f   36s
+      ```
 
-The [mailbox-controller]((https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/mailbox-controller/) ) creates a mailbox workspaces for the newly created SyncTarget `sync-target-f`:
+      The [mailbox-controller]((https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/mailbox-controller/) ) creates a mailbox workspaces for the newly created SyncTarget `sync-target-f`:
 
-```bash
-kubectl ws root
- Current workspace is "root".
+      ```bash
+      kubectl ws root
+      Current workspace is "root".
 
-kubectl ws tree
-.
-└── root
-    ├── compute
-    ├── espw
-    │   └── 1q1p9rsh18rhjuy4-mb-2c1b6ce7-bc4a-4071-887d-871ba293f303
-    ├── imw-1
-    └── my-org
-        └── wmw-1
-```
+      kubectl ws tree
+      .
+      └── root
+          ├── compute
+          ├── espw
+          │   └── 1q1p9rsh18rhjuy4-mb-2c1b6ce7-bc4a-4071-887d-871ba293f303
+          ├── imw-1
+          └── my-org
+              └── wmw-1
+      ```
 
  * Populate the `wmw`: 
 
