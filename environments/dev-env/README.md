@@ -242,7 +242,7 @@ EOF
 
  2. Create your workload objects
 
-```
+```bash
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Namespace
@@ -297,7 +297,7 @@ EOF
 
  3. Create the `EdgePlacement` object. 
  
- ```
+```bash
 cat <<EOF | kubectl apply -f -
 apiVersion: edge.kcp.io/v1alpha1
 kind: EdgePlacement
@@ -312,3 +312,5 @@ EOF
  ```
  
  Its “where predicate” (the locationSelectors array) has one label selector that matches both Location objects created earlier, thus directing the common workload to both edge clusters.
+
+In response to each EdgePlacement, the edge scheduler will create a corresponding SinglePlacementSlice object. These will indicate the following resolutions of the “where” predicates.
