@@ -163,3 +163,35 @@ I0330 17:48:08.042551   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-
 ./delete_edge-mc.sh
 ```
 
+## Bring your own workload (BYOW)
+
+1. Create your own edge infrastructure (pclusters) - (kind clusters) 
+
+```
+kind create cluster --name florin
+``` 
+
+2. Deploy the kcp-edge platform:
+
+```
+./install_edge-mc.sh --stage 0
+```
+
+This will create the following components:
+
+```
+.
+└── root
+    ├── compute
+    ├── espw
+    ├── imw-1
+    └── my-org
+        └── wmw-1
+```
+
+3. Deploy your own workload
+
+ i) populate inventory service workspace:
+ b) populate workload managed workspace: 
+
+Explains what happens the steps that edge mc does or the actions it implements
