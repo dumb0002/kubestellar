@@ -170,13 +170,13 @@ I0330 17:48:08.042551   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-
 
 ## Bring your own workload (BYOW)
 
-##### 1. Create your own edge infrastructure (pclusters) - (kind clusters) 
+#### 1. Create your own edge infrastructure (pclusters) - (kind clusters) 
 
 ```bash
 kind create cluster --name florin
 ``` 
 
-##### 2. Deploy the kcp-edge platform:
+#### 2. Deploy the kcp-edge platform:
 
 ```bash
 ./install_edge-mc.sh --stage 0
@@ -204,7 +204,7 @@ user      2872   0.0  0.2 34925136  56132 s004  S     3:22PM   0:02.44 go run ./
 user      2929   0.0  0.2 34922964  69724 s004  S     3:22PM   0:03.74 go run ./cmd/placement-translator --allclusters-context shard-main-system:admin
 ```
 
-##### 3. Deploy your own workload: 
+#### 3. Deploy your own workload: 
 
  * Populate the `imw`:
     1. Enter the target workspace: `imw`
