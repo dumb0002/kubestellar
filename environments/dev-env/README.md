@@ -191,7 +191,7 @@ This will create the following components:
 3. Deploy your own workload: 
 
  * populate inventory service workspace (imw):
-    1. Enter the imw:
+    1. Enter the target workspace: `imw`
 
     ```
       kubectl ws root:imw-1
@@ -214,7 +214,7 @@ spec:
 EOF
 ```
 
-    3. Create a Location object describing the florin cluster. For example:
+   3. Create a Location object describing the florin cluster. For example:
 
 ```
 cat <<EOF | kubectl apply -f -
@@ -234,6 +234,81 @@ EOF
  * populate workload managed workspace: 
 
 
+ 1. Enter the target workspace: `wmw-1`
 
+    ```
+      kubectl ws root:my-org:wmw-1
+    ```
 
-Explains what happens the steps that edge mc does or the actions it implements
+ 2. Create your workload objects
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: commonstuff
+  labels: {common: "si"}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: commonstuff
+  name: httpd-htdocs
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+      <body>
+        This is a common web site.
+      </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: commonstuff
+  name: commond
+spec:
+  selector: {matchLabels: {app: common} }
+  template:
+    metadata:
+      labels: {app: common}
+    spec:
+      containers:
+      - name: httpd
+        image: library/httpd:2.4
+        ports:
+        - name: http
+          containerPort: 80
+          hostPort: 8081
+          protocol: TCP
+        volumeMounts:
+        - name: htdocs
+          readOnly: true
+          mountPath: /usr/local/apache2/htdocs
+      volumes:
+      - name: htdocs
+        configMap:
+          name: httpd-htdocs
+          optional: false
+EOF
+```
+
+ 3. Create the `EdgePlacement` object. 
+ 
+ ```
+cat <<EOF | kubectl apply -f -
+apiVersion: edge.kcp.io/v1alpha1
+kind: EdgePlacement
+metadata:
+  name: edge-placement-c
+spec:
+  locationSelectors:
+  - matchLabels: {"env":"prod"}
+  namespaceSelector:
+    matchLabels: {"common":"si"}
+EOF
+ ```
+ 
+ Its “where predicate” (the locationSelectors array) has one label selector that matches both Location objects created earlier, thus directing the common workload to both edge clusters.
