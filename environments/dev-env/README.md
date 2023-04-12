@@ -195,7 +195,7 @@ This will start `kcp` and create/deploy the following components:
     └── my-org
         └── wmw-1
 ```
-- 3 kcp-edge controllers: [edge-scheduler](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/edge-scheduler/), mailbox-controller and placement-translator
+- 3 kcp-edge controllers: [edge-scheduler](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/edge-scheduler/), [mailbox-controller](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/mailbox-controller/) and [placement-translator](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/placement-translator/)
 
 ```bash
 ps aux | grep -e mailbox-controller -e placement-translator -e cmd/scheduler/main.go
