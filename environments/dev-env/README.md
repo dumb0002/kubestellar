@@ -21,152 +21,152 @@ For either Ubuntu or Mac OS - run the following script to install the required p
 
 ## Quickstart
 
-1. Clone this repo:
+#### 1. Clone this repo:
 
 ```bash
-  git clone -b dev-env https://github.com/dumb0002/edge-mc.git
+  git clone -b dev-env-v3 https://github.com/dumb0002/edge-mc.git
 ```
 
-2. Change into the following directory path: `edge-mc/environments/dev-env`
+#### 2. Change into the following directory path: `edge-mc/environments/dev-env`
 
 ```bash
   cd edge-mc/environments/dev-env
 ```
 
-3. Experiment with the kcp-edge 2023q1 PoC example scenarios:
+#### 3. Experiment with the kcp-edge 2023q1 PoC example scenarios:
 
-NB: if you're using a macOS, you may see pop-us messages similar to the one below while deploying kcp-edge: 
+    NB: if you're using a macOS, you may see pop-us messages similar to the one below while deploying kcp-edge: 
 
-```bash
-  Do you want the application “kcp” to accept incoming network connections?
-```
+    ```bash
+      Do you want the application “kcp” to accept incoming network connections?
+    ```
 
-You can accept it or configure your firewall to suppress them by adding our kcp-edge components to the list of permitted apps.
+    You can accept it or configure your firewall to suppress them by adding our kcp-edge components to the list of permitted apps.
 
-## Stage 3
+    ## Stage 3
 
-Stage 3 creates the following components (more details: https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/
-):
-
-
--  the infrastructure and the edge service provider workspace and lets that react to the inventory
--  two workloads, called “common” and “special” and in response to each EdgePlacement, the edge scheduler creates the corresponding SinglePlacementSlice object.
--  the placement translator reacts to the EdgePlacement objects in the workload management workspaces
-
-```bash
-  ./install_edge-mc.sh --stage 3
-```
-
-You should see an ouput similar to the one below:
-
-```bash
-kubectl ws tree
-.
-└── root
-    ├── compute
-    ├── espw
-    │   ├── limgjykhmrjeiwc6-mb-1c6d6132-4ef9-482e-bff5-ee7a70fb601e
-    │   └── limgjykhmrjeiwc6-mb-a1d8f1cd-6493-4480-8c5e-c7a3dd53600a
-    ├── imw-1
-    └── my-org
-        ├── wmw-c
-        └── wmw-s
+    Stage 3 creates the following components (more details: https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/
+    ):
 
 
-```
+    -  the infrastructure and the edge service provider workspace and lets that react to the inventory
+    -  two workloads, called “common” and “special” and in response to each EdgePlacement, the edge scheduler creates the corresponding SinglePlacementSlice object.
+    -  the placement translator reacts to the EdgePlacement objects in the workload management workspaces
 
-```bash
-kubectl ws root:imw-1
-kubectl get locations
-NAME         RESOURCE      AVAILABLE   INSTANCES   LABELS   AGE
-location-f   synctargets   0           1                    2m21s
-location-g   synctargets   0           1                    2m21s
+    ```bash
+      ./install_edge-mc.sh --stage 3
+    ```
 
-kubectl get synctargets
-NAME            AGE
-sync-target-f   3m6s
-sync-target-g   3m5s
-```
+    You should see an ouput similar to the one below:
 
-```bash
-kind get clusters
-florin
-guilder
-```
+    ```bash
+    kubectl ws tree
+    .
+    └── root
+        ├── compute
+        ├── espw
+        │   ├── limgjykhmrjeiwc6-mb-1c6d6132-4ef9-482e-bff5-ee7a70fb601e
+        │   └── limgjykhmrjeiwc6-mb-a1d8f1cd-6493-4480-8c5e-c7a3dd53600a
+        ├── imw-1
+        └── my-org
+            ├── wmw-c
+            └── wmw-s
 
-For workload common:
-```bash
-kubectl ws root:my-org:wmw-c
-Current workspace is "root:my-org:wmw-c".
 
-kubectl get ns
-NAME          STATUS   AGE
-commonstuff   Active   99s
-default       Active   104s
+    ```
 
-kubectl -n commonstuff get deploy
-NAME      READY   UP-TO-DATE   AVAILABLE   AGE
-commond   0/0     0            0           111s
+    ```bash
+    kubectl ws root:imw-1
+    kubectl get locations
+    NAME         RESOURCE      AVAILABLE   INSTANCES   LABELS   AGE
+    location-f   synctargets   0           1                    2m21s
+    location-g   synctargets   0           1                    2m21s
 
-kubectl -n commonstuff get configmaps
-NAME               DATA   AGE
-httpd-htdocs       1      117s
-kube-root-ca.crt   1      117s
+    kubectl get synctargets
+    NAME            AGE
+    sync-target-f   3m6s
+    sync-target-g   3m5s
+    ```
 
-kubectl get SinglePlacementSlice
-NAME               AGE
-edge-placement-c   111s
-```
+    ```bash
+    kind get clusters
+    florin
+    guilder
+    ```
 
-For workload special:
-```bash
-kubectl ws root:my-org:wmw-s
-Current workspace is "root:my-org:wmw-s".
+    For workload common:
+    ```bash
+    kubectl ws root:my-org:wmw-c
+    Current workspace is "root:my-org:wmw-c".
 
-kubectl get ns
-NAME           STATUS   AGE
-default        Active   5m1s
-specialstuff   Active   4m57s
+    kubectl get ns
+    NAME          STATUS   AGE
+    commonstuff   Active   99s
+    default       Active   104s
 
-kubectl -n specialstuff  get deploy
-NAME       READY   UP-TO-DATE   AVAILABLE   AGE
-speciald   0/0     0            0           5m29s
+    kubectl -n commonstuff get deploy
+    NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+    commond   0/0     0            0           111s
 
-kubectl -n specialstuff  get configmaps
-NAME               DATA   AGE
-httpd-htdocs       1      5m35s
-kube-root-ca.crt   1      5m35s
+    kubectl -n commonstuff get configmaps
+    NAME               DATA   AGE
+    httpd-htdocs       1      117s
+    kube-root-ca.crt   1      117s
 
-kubectl get SinglePlacementSlice
-NAME               AGE
-edge-placement-s   5m26s
-```
+    kubectl get SinglePlacementSlice
+    NAME               AGE
+    edge-placement-c   111s
+    ```
 
-For placement translator:
-```bash
-kubectl ws root:my-org:wmw-c
-Current workspace is "root:my-org:wmw-c".
+    For workload special:
+    ```bash
+    kubectl ws root:my-org:wmw-s
+    Current workspace is "root:my-org:wmw-s".
 
-kubectl get EdgePlacement
-NAME               AGE
-edge-placement-c   91s
+    kubectl get ns
+    NAME           STATUS   AGE
+    default        Active   5m1s
+    specialstuff   Active   4m57s
 
-kubectl delete EdgePlacement edge-placement-c
-edgeplacement.edge.kcp.io "edge-placement-c" deleted
-```
-Placement translator logs:
-```bash
-:WorkspaceScheduled Status:True Severity: LastTransitionTime:2023-03-30 17:46:42 -0400 EDT Reason: Message:}] Initializers:[]}}
-I0330 17:47:01.732064   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-placement-c" val=map[{APIGroup: Resource:namespaces Name:commonstuff}:{APIVersion:v1 IncludeNamespaceObject:false}]
-I0330 17:47:01.732364   64918 main.go:119] "Receive" key="211ieqpc4xyydw2w:edge-placement-s" val=map[{APIGroup: Resource:namespaces Name:specialstuff}:{APIVersion:v1 IncludeNamespaceObject:false}]
-I0330 17:48:08.042551   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-placement-c" val=map[]
-```
+    kubectl -n specialstuff  get deploy
+    NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+    speciald   0/0     0            0           5m29s
 
-4. Delete a kcp-edge Poc2023q1 example stage:
+    kubectl -n specialstuff  get configmaps
+    NAME               DATA   AGE
+    httpd-htdocs       1      5m35s
+    kube-root-ca.crt   1      5m35s
 
-```bash
-./delete_edge-mc.sh
-```
+    kubectl get SinglePlacementSlice
+    NAME               AGE
+    edge-placement-s   5m26s
+    ```
+
+    For placement translator:
+    ```bash
+    kubectl ws root:my-org:wmw-c
+    Current workspace is "root:my-org:wmw-c".
+
+    kubectl get EdgePlacement
+    NAME               AGE
+    edge-placement-c   91s
+
+    kubectl delete EdgePlacement edge-placement-c
+    edgeplacement.edge.kcp.io "edge-placement-c" deleted
+    ```
+    Placement translator logs:
+    ```bash
+    :WorkspaceScheduled Status:True Severity: LastTransitionTime:2023-03-30 17:46:42 -0400 EDT Reason: Message:}] Initializers:[]}}
+    I0330 17:47:01.732064   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-placement-c" val=map[{APIGroup: Resource:namespaces Name:commonstuff}:{APIVersion:v1 IncludeNamespaceObject:false}]
+    I0330 17:47:01.732364   64918 main.go:119] "Receive" key="211ieqpc4xyydw2w:edge-placement-s" val=map[{APIGroup: Resource:namespaces Name:specialstuff}:{APIVersion:v1 IncludeNamespaceObject:false}]
+    I0330 17:48:08.042551   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-placement-c" val=map[]
+    ```
+
+#### 4. Delete a kcp-edge Poc2023q1 example stage:
+
+  ```bash
+  ./delete_edge-mc.sh
+  ```
 
 ## Bring your own workload (BYOW)
 
@@ -178,31 +178,45 @@ kind create cluster --name florin
 
 #### 2. Deploy the kcp-edge platform:
 
-```bash
-./install_edge-mc.sh --stage 0
-```
+   * Step-1: Clone this repo:
 
-This will start `kcp` and create/deploy the following components:
+    ```bash
+      git clone -b dev-env-v3 https://github.com/dumb0002/edge-mc.git
+    ```
 
-- 4 kcp workspaces: edge service provider workspace (`espw`), inventory management workspace (`imw`) and workload management workspace (`wmw`) under my-org workspace
+   * Step-2: change into the following directory path: `edge-mc/environments/dev-env`
 
-```bash
-.
-└── root
-    ├── compute
-    ├── espw
-    ├── imw-1
-    └── my-org
-        └── wmw-1
-```
-- 3 kcp-edge controllers: [edge-scheduler](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/edge-scheduler/), [mailbox-controller](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/mailbox-controller/) and [placement-translator](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/placement-translator/)
+    ```bash
+      cd edge-mc/environments/dev-env
+    ```
 
-```bash
-ps aux | grep -e mailbox-controller -e placement-translator -e cmd/scheduler/main.go
-user      2898   0.0  0.1 34922264  45188 s004  S     3:22PM   0:01.84 go run cmd/scheduler/main.go -v 2 --root-user shard-main-kcp-admin --root-cluster shard-main-root --sysadm-context shard-main-system:admin --sysadm-user shard-main-shard-admin
-user      2872   0.0  0.2 34925136  56132 s004  S     3:22PM   0:02.44 go run ./cmd/mailbox-controller --inventory-context=shard-main-root -v=2
-user      2929   0.0  0.2 34922964  69724 s004  S     3:22PM   0:03.74 go run ./cmd/placement-translator --allclusters-context shard-main-system:admin
-```
+   * Step-3: Deploy kcp-edge
+
+      ```bash
+      ./install_edge-mc.sh --stage 0
+      ```
+
+    This will start `kcp` and create/deploy the following components:
+
+    - 4 kcp workspaces: edge service provider workspace (`espw`), inventory management workspace (`imw`) and workload management workspace (`wmw`) under my-org workspace
+
+    ```bash
+    .
+    └── root
+        ├── compute
+        ├── espw
+        ├── imw-1
+        └── my-org
+            └── wmw-1
+    ```
+    - 3 kcp-edge controllers: [edge-scheduler](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/edge-scheduler/), [mailbox-controller](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/mailbox-controller/) and [placement-translator](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/placement-translator/)
+
+    ```bash
+    ps aux | grep -e mailbox-controller -e placement-translator -e cmd/scheduler/main.go
+    user      2898   0.0  0.1 34922264  45188 s004  S     3:22PM   0:01.84 go run cmd/scheduler/main.go -v 2 --root-user shard-main-kcp-admin --root-cluster shard-main-root --sysadm-context shard-main-system:admin --sysadm-user shard-main-shard-admin
+    user      2872   0.0  0.2 34925136  56132 s004  S     3:22PM   0:02.44 go run ./cmd/mailbox-controller --inventory-context=shard-main-root -v=2
+    user      2929   0.0  0.2 34922964  69724 s004  S     3:22PM   0:03.74 go run ./cmd/placement-translator --allclusters-context shard-main-system:admin
+    ```
 
 #### 3. Deploy your own workload: 
 
@@ -247,7 +261,7 @@ user      2929   0.0  0.2 34922964  69724 s004  S     3:22PM   0:03.74 go run ./
       EOF
      ```
 
-      A location and synctarget object will be created:
+      A location and synctarget objects will be created:
 
       ```bash
       kubectl get locations,synctargets
