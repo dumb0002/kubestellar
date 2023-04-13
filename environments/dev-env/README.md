@@ -204,27 +204,27 @@ kind create cluster --name florin
     ./install_edge-mc.sh --stage 0
     ```
 
-  This will start `kcp` and create/deploy the following components:
+    This will start `kcp` and create/deploy the following components:
 
-  - 4 kcp workspaces: edge service provider workspace (`espw`), inventory management workspace (`imw`) and workload management workspace (`wmw`) under my-org workspace
+    - 4 kcp workspaces: edge service provider workspace (`espw`), inventory management workspace (`imw`) and workload management workspace (`wmw`) under my-org workspace
 
-  ```bash
-  .
-  └── root
-      ├── compute
-      ├── espw
-      ├── imw-1
-      └── my-org
-          └── wmw-1
-  ```
-  - 3 kcp-edge controllers: [edge-scheduler](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/edge-scheduler/), [mailbox-controller](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/mailbox-controller/) and [placement-translator](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/placement-translator/)
+    ```bash
+    .
+    └── root
+        ├── compute
+        ├── espw
+        ├── imw-1
+        └── my-org
+            └── wmw-1
+    ```
+    - 3 kcp-edge controllers: [edge-scheduler](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/edge-scheduler/), [mailbox-controller](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/mailbox-controller/) and [placement-translator](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/placement-translator/)
 
-  ```bash
-  ps aux | grep -e mailbox-controller -e placement-translator -e cmd/scheduler/main.go
-  user      2898   0.0  0.1 34922264  45188 s004  S     3:22PM   0:01.84 go run cmd/scheduler/main.go -v 2 --root-user shard-main-kcp-admin --root-cluster shard-main-root --sysadm-context shard-main-system:admin --sysadm-user shard-main-shard-admin
-  user      2872   0.0  0.2 34925136  56132 s004  S     3:22PM   0:02.44 go run ./cmd/mailbox-controller --inventory-context=shard-main-root -v=2
-  user      2929   0.0  0.2 34922964  69724 s004  S     3:22PM   0:03.74 go run ./cmd/placement-translator --allclusters-context shard-main-system:admin
-  ```
+    ```bash
+    ps aux | grep -e mailbox-controller -e placement-translator -e cmd/scheduler/main.go
+    user      2898   0.0  0.1 34922264  45188 s004  S     3:22PM   0:01.84 go run cmd/scheduler/main.go -v 2 --root-user shard-main-kcp-admin --root-cluster shard-main-root --sysadm-context shard-main-system:admin --sysadm-user shard-main-shard-admin
+    user      2872   0.0  0.2 34925136  56132 s004  S     3:22PM   0:02.44 go run ./cmd/mailbox-controller --inventory-context=shard-main-root -v=2
+    user      2929   0.0  0.2 34922964  69724 s004  S     3:22PM   0:03.74 go run ./cmd/placement-translator --allclusters-context shard-main-system:admin
+    ```
 
 #### 3. Deploy your own workload: 
 
