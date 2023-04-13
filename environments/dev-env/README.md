@@ -44,7 +44,7 @@ cd edge-mc/environments/dev-env
 
 #### 3. Experiment with the kcp-edge 2023q1 PoC example scenarios:
 
-In this example Stage 3 described in more details [here](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/). It creates the following components:
+In this quickstart example we will Stage 3 described in more details [here](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/). It creates the following components:
 
 -  The infrastructure and the edge service provider workspace and lets that react to the inventory
 -  Two workloads, called “common” and “special” and in response to each EdgePlacement, the edge scheduler creates the corresponding SinglePlacementSlice object.
