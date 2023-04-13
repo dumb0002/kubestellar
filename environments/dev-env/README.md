@@ -177,7 +177,9 @@ I0330 17:48:08.042551   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-
 
 ## Bring your own workload (BYOW)
 
-#### 1. Create your own edge infrastructure (pclusters) - (kind clusters) 
+#### 1. Create your own edge infrastructure (pclusters):
+
+For example: create a kind cluster
 
 ```bash
 kind create cluster --name florin
