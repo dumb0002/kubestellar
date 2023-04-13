@@ -14,13 +14,13 @@
 
 For MacOS only:
 ```bash
-  brew install ko gcc jq make go@1.19 kind kubectl
+brew install ko gcc jq make go@1.19 kind kubectl
 ```
 
 Run the following script to install the required package (Linux or MacOS ):
 
 ```bash
-  ./install_req.sh
+./install_req.sh
 ```
 
 ## Quickstart
@@ -28,7 +28,7 @@ Run the following script to install the required package (Linux or MacOS ):
 #### 1. Clone this repo:
 
 ```bash
-  git clone -b dev-env-v3 https://github.com/dumb0002/edge-mc.git
+git clone -b dev-env-v3 https://github.com/dumb0002/edge-mc.git
 ```
 
 #### 2. Change into the following directory path:
@@ -62,6 +62,12 @@ You can accept it or configure your firewall to suppress them by adding our kcp-
 You should see an ouput similar to the one below:
 
 ```bash
+kind get clusters
+florin
+guilder
+```
+
+```bash
 kubectl ws tree
 .
 └── root
@@ -88,12 +94,6 @@ kubectl get synctargets
 NAME            AGE
 sync-target-f   3m6s
 sync-target-g   3m5s
-```
-
-```bash
-kind get clusters
-florin
-guilder
 ```
 
 For workload common:
