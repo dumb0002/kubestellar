@@ -33,7 +33,7 @@ For Windows WSL/Ubuntu platform, follow the instructions [here](docs/README.md)
 #### 1. Clone this repo:
 
 ```bash
-git clone -b dev-env-v2 https://github.com/dumb0002/edge-mc.git
+git clone -b dev-env-v3 https://github.com/dumb0002/edge-mc.git
 ```
 
 #### 2. Change into the following directory path:
@@ -190,7 +190,7 @@ kind create cluster --name florin
   * Step-1: Clone this repo:
 
     ```bash
-      git clone -b dev-env-v2 https://github.com/dumb0002/edge-mc.git
+      git clone -b dev-env-v3 https://github.com/dumb0002/edge-mc.git
     ```
 
   * Step-2: change into the following directory path:
