@@ -13,9 +13,8 @@
   - MacOS
   - Windows WSL/Ubuntu
 
-For Windows WSL/Ubuntu platform, follow the instructions [here](docs/README.md)
-
 For MacOS only:
+
 ```bash
 brew install ko gcc jq make go@1.19 kind kubectl
 ```
@@ -25,6 +24,9 @@ Run the following script to install the required package (Linux or MacOS ):
 ```bash
 ./install_req.sh
 ```
+
+For Windows WSL/Ubuntu platform, follow the instructions [here](docs/README.md)
+
 
 ## Quickstart
 
