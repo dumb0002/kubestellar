@@ -235,7 +235,7 @@ kind create cluster --name florin
           kubectl ws root:imw-1
       ```
     
-    * Step-2: create a SyncTarget object to represent the florin cluster. For example:
+    * Step-2: create a SyncTarget object to represent your pcluster. For example:
 
       ```bash
       cat <<EOF | kubectl apply -f -
@@ -252,7 +252,7 @@ kind create cluster --name florin
       EOF
       ```
 
-   * Step-3: create a Location object describing the florin cluster. For example:
+   * Step-3: create a Location object describing your pcluster. For example:
 
       ```bash
       cat <<EOF | kubectl apply -f -
@@ -281,7 +281,7 @@ kind create cluster --name florin
       synctarget.workload.kcp.io/sync-target-f   36s
       ```
 
-      The [mailbox-controller](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/mailbox-controller/) creates a mailbox workspaces for the newly created SyncTarget `sync-target-f`:
+      The [mailbox-controller](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/mailbox-controller/) creates a mailbox workspace for the newly created SyncTarget: `sync-target-f`:
 
       ```bash
       kubectl ws root
@@ -298,86 +298,64 @@ kind create cluster --name florin
               └── wmw-1
       ```
 
- * Populate the `wmw`: 
+* Populate the `wmw`: 
 
+  * Step-1: Enter the target workspace: `wmw-1`
+ 
+    ```bash
+      kubectl ws root:my-org:wmw-1
+    ```
 
- 1. Enter the target workspace: `wmw-1`
+  * Step-2: create your workload objects. For example:
 
-```bash
-  kubectl ws root:my-org:wmw-1
-```
-
- 2. Create your workload objects
-
-```bash
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: commonstuff
-  labels: {common: "si"}
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  namespace: commonstuff
-  name: httpd-htdocs
-data:
-  index.html: |
-    <!DOCTYPE html>
-    <html>
-      <body>
-        This is a common web site.
-      </body>
-    </html>
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  namespace: commonstuff
-  name: commond
-spec:
-  selector: {matchLabels: {app: common} }
-  template:
+    ```bash
+    cat <<EOF | kubectl apply -f -
+    apiVersion: v1
+    kind: Namespace
     metadata:
-      labels: {app: common}
+      name: commonstuff
+      labels: {common: "si"}
+    ---
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx-deployment
+      labels:
+        app: nginx
     spec:
-      containers:
-      - name: httpd
-        image: library/httpd:2.4
-        ports:
-        - name: http
-          containerPort: 80
-          hostPort: 8081
-          protocol: TCP
-        volumeMounts:
-        - name: htdocs
-          readOnly: true
-          mountPath: /usr/local/apache2/htdocs
-      volumes:
-      - name: htdocs
-        configMap:
-          name: httpd-htdocs
-          optional: false
-EOF
-```
+      replicas: 3
+      selector:
+        matchLabels:
+          app: nginx
+      template:
+        metadata:
+          labels:
+            app: nginx
+        spec:
+          containers:
+          - name: nginx
+            image: nginx:1.14.2
+            ports:
+            - containerPort: 80
+    EOF
+    ```
 
- 3. Create the `EdgePlacement` object. 
+  * Step-3: create the `EdgePlacement` object for your workload. 
  
-```bash
-cat <<EOF | kubectl apply -f -
-apiVersion: edge.kcp.io/v1alpha1
-kind: EdgePlacement
-metadata:
-  name: edge-placement-c
-spec:
-  locationSelectors:
-  - matchLabels: {"env":"prod"}
-  namespaceSelector:
-    matchLabels: {"common":"si"}
-EOF
- ```
+    ```bash
+    cat <<EOF | kubectl apply -f -
+    apiVersion: edge.kcp.io/v1alpha1
+    kind: EdgePlacement
+    metadata:
+      name: edge-placement-c
+    spec:
+      locationSelectors:
+      - matchLabels: {"env":"prod"}
+      namespaceSelector:
+        matchLabels: {"common":"si"}
+    EOF
+    ```
  
- Its “where predicate” (the locationSelectors array) has one label selector that matches both Location objects created earlier, thus directing the common workload to both edge clusters.
+    Its “where predicate” (the locationSelectors array) has one label selector that matches both Location objects created earlier, thus directing the common workload to both edge clusters.
 
-In response to each EdgePlacement, the edge scheduler will create a corresponding SinglePlacementSlice object. These will indicate the following resolutions of the “where” predicates.
+    In response to each EdgePlacement, the edge scheduler will create a corresponding SinglePlacementSlice object. These will indicate the following resolutions of the “where” predicates.
