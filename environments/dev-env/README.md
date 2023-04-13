@@ -8,12 +8,16 @@
    - kind
    - kubectl  
 
-For Mac OS only:
+## Supported OS Platforms 
+  - Linux
+  - MacOS
+
+For MacOS only:
 ```bash
   brew install ko gcc jq make go@1.19 kind kubectl
 ```
 
-For either Ubuntu or Mac OS - run the following script to install the required packages:
+Run the following script to install the required package (Linux or MacOS ):
 
 ```bash
   ./install_req.sh
@@ -27,7 +31,7 @@ For either Ubuntu or Mac OS - run the following script to install the required p
   git clone -b dev-env-v3 https://github.com/dumb0002/edge-mc.git
 ```
 
-#### 2. Change into the following directory path: `edge-mc/environments/dev-env`
+#### 2. Change into the following directory path:
 
 ```bash
   cd edge-mc/environments/dev-env
