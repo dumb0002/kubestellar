@@ -8,6 +8,7 @@
    - kind
    - kubectl  
 
+
 ## Supported OS Platforms 
   - Linux
   - MacOS
@@ -83,9 +84,8 @@ kubectl ws tree
     └── my-org
         ├── wmw-c
         └── wmw-s
-
-
 ```
+
 
 ```bash
 kubectl ws root:imw-1
@@ -101,6 +101,7 @@ sync-target-g   3m5s
 ```
 
 For workload common:
+
 ```bash
 kubectl ws root:my-org:wmw-c
 Current workspace is "root:my-org:wmw-c".
@@ -125,6 +126,7 @@ edge-placement-c   111s
 ```
 
 For workload special:
+
 ```bash
 kubectl ws root:my-org:wmw-s
 Current workspace is "root:my-org:wmw-s".
@@ -150,6 +152,7 @@ edge-placement-s   5m26s
 
 For placement translator:
 ```bash
+
 kubectl ws root:my-org:wmw-c
 Current workspace is "root:my-org:wmw-c".
 
@@ -161,13 +164,13 @@ kubectl delete EdgePlacement edge-placement-c
 edgeplacement.edge.kcp.io "edge-placement-c" deleted
 ```
 Placement translator logs:
+
 ```bash
 :WorkspaceScheduled Status:True Severity: LastTransitionTime:2023-03-30 17:46:42 -0400 EDT Reason: Message:}] Initializers:[]}}
 I0330 17:47:01.732064   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-placement-c" val=map[{APIGroup: Resource:namespaces Name:commonstuff}:{APIVersion:v1 IncludeNamespaceObject:false}]
 I0330 17:47:01.732364   64918 main.go:119] "Receive" key="211ieqpc4xyydw2w:edge-placement-s" val=map[{APIGroup: Resource:namespaces Name:specialstuff}:{APIVersion:v1 IncludeNamespaceObject:false}]
 I0330 17:48:08.042551   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-placement-c" val=map[]
 ```
-
 
 #### 4. Delete a kcp-edge Poc2023q1 example stage:
 
