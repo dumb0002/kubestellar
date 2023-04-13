@@ -355,8 +355,35 @@ kind create cluster --name florin
     EOF
     ```
  
-    In response to the created `EdgePlacement`, the edge scheduler will create a corresponding `SinglePlacementSlice object`:
+    In response to the created `EdgePlacement`, the edge scheduler will create a corresponding `SinglePlacementSlice` object:
 
     ```bash
-    
+        kubectl get SinglePlacementSlice -o yaml edge-placement-c
+
+        apiVersion: edge.kcp.io/v1alpha1
+        destinations:
+        - cluster: 2vsg1pyc1uqtyk40
+          locationName: location-f
+          syncTargetName: sync-target-f
+          syncTargetUID: b7acd821-319b-4061-be47-084fbce36f29
+        kind: SinglePlacementSlice
+        metadata:
+          annotations:
+            kcp.io/cluster: 19nyul7j8az21nkp
+          creationTimestamp: "2023-04-13T03:58:20Z"
+          generation: 1
+          name: edge-placement-c
+          ownerReferences:
+          - apiVersion: edge.kcp.io/v1alpha1
+            kind: EdgePlacement
+            name: edge-placement-c
+            uid: c3d718b8-9a2f-4a34-9b80-b98d091cff67
+          resourceVersion: "1088"
+          uid: b7a8e302-1532-4e48-a69e-910a9ac2aa62
     ```
+
+   * Step-4: delete your kcp-edge environment
+
+   ```bash
+   ./delete_edge-mc.sh
+   ```
