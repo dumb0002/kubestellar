@@ -11,6 +11,9 @@
 ## Supported OS Platforms 
   - Linux
   - MacOS
+  - Windows WSL/Ubuntu
+
+For Windows WSL/Ubuntu platform, follow the instructions [here](docs/README.md)
 
 For MacOS only:
 ```bash
