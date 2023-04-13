@@ -47,7 +47,7 @@ Stage 3 creates the following components (more details: https://docs.kcp-edge.io
 -  the placement translator reacts to the EdgePlacement objects in the workload management workspaces
 
 ```bash
-  ./install_edge-mc.sh --stage 3
+./install_edge-mc.sh --stage 3
 ```
 
 NB: if you're using a macOS, you may see pop-us messages similar to the one below while deploying kcp-edge: 
@@ -167,9 +167,9 @@ I0330 17:48:08.042551   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-
 
 #### 4. Delete a kcp-edge Poc2023q1 example stage:
 
-  ```bash
-  ./delete_edge-mc.sh
-  ```
+```bash
+./delete_edge-mc.sh
+```
 
 ## Bring your own workload (BYOW)
 
