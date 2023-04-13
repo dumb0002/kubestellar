@@ -33,7 +33,7 @@ For Windows WSL/Ubuntu platform, follow the instructions [here](docs/README.md)
 #### 1. Clone this repo:
 
 ```bash
-git clone -b dev-env-v3 https://github.com/dumb0002/edge-mc.git
+git clone -b dev-env-v2 https://github.com/dumb0002/edge-mc.git
 ```
 
 #### 2. Change into the following directory path:
@@ -44,12 +44,11 @@ cd edge-mc/environments/dev-env
 
 #### 3. Experiment with the kcp-edge 2023q1 PoC example scenarios:
 
-Stage 3 creates the following components (more details: https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/
-):
+In this example Stage 3 described in more details [here](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/). It creates the following components:
 
--  the infrastructure and the edge service provider workspace and lets that react to the inventory
--  two workloads, called “common” and “special” and in response to each EdgePlacement, the edge scheduler creates the corresponding SinglePlacementSlice object.
--  the placement translator reacts to the EdgePlacement objects in the workload management workspaces
+-  The infrastructure and the edge service provider workspace and lets that react to the inventory
+-  Two workloads, called “common” and “special” and in response to each EdgePlacement, the edge scheduler creates the corresponding SinglePlacementSlice object.
+-  The placement translator reacts to the EdgePlacement objects in the workload management workspaces
 
 ```bash
 ./install_edge-mc.sh --stage 3
@@ -189,7 +188,7 @@ kind create cluster --name florin
   * Step-1: Clone this repo:
 
     ```bash
-      git clone -b dev-env-v3 https://github.com/dumb0002/edge-mc.git
+      git clone -b dev-env-v2 https://github.com/dumb0002/edge-mc.git
     ```
 
   * Step-2: change into the following directory path:
@@ -340,7 +339,7 @@ kind create cluster --name florin
     EOF
     ```
 
-  * Step-3: create the `EdgePlacement` object for your workload. 
+  * Step-3: create the `EdgePlacement` object for your workload. Its “where predicate” (the locationSelectors array) has one label selector that matches the Location object created earlier, thus directing the workload to your pcluster.
  
     ```bash
     cat <<EOF | kubectl apply -f -
@@ -356,6 +355,8 @@ kind create cluster --name florin
     EOF
     ```
  
-    Its “where predicate” (the locationSelectors array) has one label selector that matches both Location objects created earlier, thus directing the common workload to both edge clusters.
+    In response to the created `EdgePlacement`, the edge scheduler will create a corresponding `SinglePlacementSlice object`:
 
-    In response to each EdgePlacement, the edge scheduler will create a corresponding SinglePlacementSlice object. These will indicate the following resolutions of the “where” predicates.
+    ```bash
+    
+    ```
