@@ -186,17 +186,17 @@ kind create cluster --name florin
 
 #### 2. Deploy the kcp-edge platform:
 
-   * Step-1: Clone this repo:
+  * Step-1: Clone this repo:
 
-    ```bash
-      git clone -b dev-env-v3 https://github.com/dumb0002/edge-mc.git
-    ```
+  ```bash
+    git clone -b dev-env-v3 https://github.com/dumb0002/edge-mc.git
+  ```
 
-   * Step-2: change into the following directory path: `edge-mc/environments/dev-env`
+  * Step-2: change into the following directory path: `edge-mc/environments/dev-env`
 
-    ```bash
-      cd edge-mc/environments/dev-env
-    ```
+  ```bash
+    cd edge-mc/environments/dev-env
+  ```
 
    * Step-3: Deploy kcp-edge
 
