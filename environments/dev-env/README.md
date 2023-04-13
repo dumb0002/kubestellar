@@ -50,6 +50,15 @@ Stage 3 creates the following components (more details: https://docs.kcp-edge.io
   ./install_edge-mc.sh --stage 3
 ```
 
+NB: if you're using a macOS, you may see pop-us messages similar to the one below while deploying kcp-edge: 
+
+```bash
+  Do you want the application “kcp” to accept incoming network connections?
+```
+
+You can accept it or configure your firewall to suppress them by adding our kcp-edge components to the list of permitted apps.
+
+
 You should see an ouput similar to the one below:
 
 ```bash
@@ -155,15 +164,6 @@ I0330 17:47:01.732364   64918 main.go:119] "Receive" key="211ieqpc4xyydw2w:edge-
 I0330 17:48:08.042551   64918 main.go:119] "Receive" key="2vh6tnanyw60negt:edge-placement-c" val=map[]
 ```
 
-  NB: if you're using a macOS, you may see pop-us messages similar to the one below while deploying kcp-edge: 
-
-```bash
-  Do you want the application “kcp” to accept incoming network connections?
-```
-
-You can accept it or configure your firewall to suppress them by adding our kcp-edge components to the list of permitted apps.
-
-## Stage 3
 
 #### 4. Delete a kcp-edge Poc2023q1 example stage:
 
