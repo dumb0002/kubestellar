@@ -382,11 +382,19 @@ kind create cluster --name florin
 
   In response to the created EdgePlacement and SinglePlacementSlice objects, the [placement translator](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/placement-translator/) will copy the workload prescriptions into the mailbox workspaces and create `SyncerConfig` objects there.
 
-  Use the command `kubectl ws root:espw tree` to obtain the name of your mailbox workspace (`<mailbox-workspace-name>`)
+  Use the following commands to obtain the name of the mailbox workspace (mbws) associated with the SyncTarget created earlier 
 
+  ```
+  kubectl ws root:espw
+  $stname=florin
+  mbws=$(kubectl get Workspace -o json | jq -r ".items | .[] | .metadata | select(.annotations [\"edge.kcp.io/sync-target-name\"] == \"$stname\") | .name")
+  ```
+
+  Then check the objects created in the mailbox workspace:
+  
   ```console
-  kubectl ws root:espw:<mailbox-workspace-name>
-  Current workspace is "root:espw:<mailbox-workspace-name>".
+  kubectl ws root:espw:$mbws
+  Current workspace is "root:espw:$mbws".
   
   kubectl get ns
   NAME          STATUS   AGE
