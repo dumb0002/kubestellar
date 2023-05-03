@@ -382,7 +382,7 @@ kind create cluster --name florin
 
   In response to the created EdgePlacement and SinglePlacementSlice objects, the [placement translator](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/placement-translator/) will copy the workload prescriptions into the mailbox workspaces and create `SyncerConfig` objects there.
 
-  Use the following commands to obtain the name of the mailbox workspace (mbws) associated with the SyncTarget created earlier 
+  Use the following commands to obtain the name of the mailbox workspace (`mbws`) associated with the SyncTarget created earlier 
 
   ```console
   kubectl ws root:espw
