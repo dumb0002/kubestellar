@@ -1,7 +1,7 @@
 # KCP-Edge Example Scenarios:
 
 <p align="center">
-<img src="../images/Edge-PoC-2023q1-Scenario-1-stage-4.png" width="800" height="800">
+<img src="../images/Edge-PoC-2023q1-Scenario-1-stage-4.png" width="800" height="600">
 </p>
 
 In this example scenario we deploy two [kind](https://kind.sigs.k8s.io/) edge clusters. We call them “florin” and “guilder”. We also deploy two workloads (`special & common`). The common workload goes on both edge clusters and special workload goes on only into the `guilder` edge cluster. This example is described in more details [here](https://docs.kcp-edge.io/docs/coding-milestones/poc2023q1/example1/). 
