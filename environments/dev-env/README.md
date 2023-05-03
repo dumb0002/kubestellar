@@ -384,14 +384,14 @@ kind create cluster --name florin
 
   Use the following commands to obtain the name of the mailbox workspace (mbws) associated with the SyncTarget created earlier 
 
-  ```
+  ```console
   kubectl ws root:espw
   $stname=florin
   mbws=$(kubectl get Workspace -o json | jq -r ".items | .[] | .metadata | select(.annotations [\"edge.kcp.io/sync-target-name\"] == \"$stname\") | .name")
   ```
 
   Then check the objects created in the mailbox workspace:
-  
+
   ```console
   kubectl ws root:espw:$mbws
   Current workspace is "root:espw:$mbws".
