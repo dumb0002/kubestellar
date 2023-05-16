@@ -125,7 +125,7 @@ if [ $install -eq 0 ]; then
       kubectl delete ws "$espw_name"
       echo "Deleted workspace: $espw_name"
    fi
-   
+
    echo "kubestellar stopped ....."
    exit 0
 fi
@@ -155,12 +155,18 @@ echo "****************************************"
 echo "Launching KubeStellar ..."
 echo "****************************************"
 
+echo "------------ 1 ---------------"
+echo $SCRIPT_DIR
+echo "------------ 1 ---------------"
 
 if kubectl get Workspace "$espw_name" &> /dev/null; then
    echo "espw workspace already exists -- using it:"
    kubectl ws "$espw_name"
 else 
    if [ $verbosity == 1 ]; then
+        echo "------------ 2 ---------------"
+        echo $SCRIPT_DIR
+        echo "------------ 2 ---------------"
         kubectl ws create "$espw_name" --enter
         kubectl apply -f   $SCRIPT_DIR/../config/crds 
         kubectl apply -f   $SCRIPT_DIR/../config/exports
