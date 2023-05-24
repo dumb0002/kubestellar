@@ -92,6 +92,13 @@
          
     </url>
     <url>
+         <loc>https://docs.kubestellar.io/main/Coding%20Milestones/PoC2023q3/outline/</loc>
+         <lastmod>2023-05-24</lastmod>
+         <changefreq>daily</changefreq>
+         <xhtml:link rel="alternate" hreflang="en" href="https://docs.kubestellar.io/main/en/Coding%20Milestones/PoC2023q3/outline/"/>
+         
+    </url>
+    <url>
          <loc>https://docs.kubestellar.io/main/Community/_index/</loc>
          <lastmod>2023-05-24</lastmod>
          <changefreq>daily</changefreq>
