@@ -16,27 +16,48 @@
 # This is an end to end test of multi cluster deployement.
 # For readable instructions, please visit ../../../docs/content/direct
 
-set -x # so users can see what is going on
+#set -x # so users can see what is going on
+
+env="kind"
 
 if [ "$1" == "--released" ]; then
     setup_flags="$1"
     shift
 fi
 
+if [ "$1" == "--env" ]; then
+    env="$2"
+    shift 2
+fi
+
 if [ "$#" != 0 ]; then
-    echo "Usage: $0 [--released]" >& 2
+    echo "Usage: $0 [--released or/and --env kind/ocp]" >& 2
     exit 1
 fi
 
 set -e # exit on error
 
-SRC_DIR="$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
-COMMON_SRCS="${SRC_DIR}/../common"
-HACK_DIR="${SRC_DIR}/../../../hack"
+if [ $env == "kind" ];then
+    SRC_DIR="$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+    COMMON_SRCS="${SRC_DIR}/../common"
+    HACK_DIR="${SRC_DIR}/../../../hack"
 
-"${HACK_DIR}/check_pre_req.sh" --assert --verbose kubectl docker kind make go ko yq helm kflex ocm
+    "${HACK_DIR}/check_pre_req.sh" --assert --verbose kubectl docker kind make go ko yq helm kflex ocm
 
-"${COMMON_SRCS}/cleanup.sh"
-source "${COMMON_SRCS}/setup-shell.sh"
-"${COMMON_SRCS}/setup-kubestellar.sh" $setup_flags
-"${SRC_DIR}/use-kubestellar.sh"
+    "${COMMON_SRCS}/cleanup.sh"
+    source "${COMMON_SRCS}/setup-shell.sh"
+    "${COMMON_SRCS}/setup-kubestellar.sh" $setup_flags
+    "${SRC_DIR}/use-kubestellar.sh"
+
+elif [ $env == "ocp" ];then
+   bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/common/cleanup.sh) --env ocp
+   source <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/common/setup-shell.sh)
+   bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/common/setup-kubestellar-ocp.sh)
+   bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/multi-cluster-deployment/use-kubestellar.sh) --env ocp
+else
+
+   echo "$0: unknown flag option" >&2 ;
+   echo "Usage: $0 [--env kind or --env ocp]" >& 2
+   exit 1
+fi
+
