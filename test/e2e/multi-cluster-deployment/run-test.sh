@@ -20,7 +20,7 @@ set -x # so users can see what is going on
 
 while [ $# != 0 ]; do
     case "$1" in
-        (-h|--help) echo "$0 usage: (--released | --kubestellar-controller-manager-verbosity \$num | --transport-controller-verbosity \$num)*"
+        (-h|--help) echo "$0 usage: (--released | --env | --kubestellar-controller-manager-verbosity \$num | --transport-controller-verbosity \$num)*"
                     exit;;
         (--released) setup_flags="$setup_flags $1";;
         (--kubestellar-controller-manager-verbosity|--transport-controller-verbosity)
