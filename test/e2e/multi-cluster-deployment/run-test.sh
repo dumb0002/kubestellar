@@ -16,23 +16,34 @@
 # This is an end to end test of multi cluster deployement.
 # For readable instructions, please visit ../../../docs/content/direct
 
-#set -x # so users can see what is going on
+set -x # so users can see what is going on
 
 env="kind"
 
-if [ "$1" == "--released" ]; then
-    setup_flags="$1"
+while [ $# != 0 ]; do
+    case "$1" in
+        (-h|--help) echo "$0 usage: (--released | --env | --kubestellar-controller-manager-verbosity \$num | --transport-controller-verbosity \$num)*"
+                    exit;;
+        (--released) setup_flags="$setup_flags $1";;
+        (--kubestellar-controller-manager-verbosity|--transport-controller-verbosity)
+          if (( $# > 1 )); then
+            setup_flags="$setup_flags $1 $2"
+            shift
+          else
+            echo "Missing $1 value" >&2
+            exit 1;
+          fi;;
+        (--env) 
+          if (( $# > 1 )); then
+              env="$2"
+              shift
+            else
+              echo "Missing environment variable value" >&2
+              exit 1;
+        (*) echo "$0: unrecognized argument '$1'" >&2
+            exit 1
+    esac
     shift
-fi
-
-if [ "$1" == "--env" ]; then
-    env="$2"
-    shift 2
-fi
-
-if [ "$#" != 0 ]; then
-    echo "Usage: $0 [--released or/and --env kind/ocp]" >& 2
-    exit 1
 fi
 
 set -e # exit on error
@@ -60,4 +71,3 @@ else
    echo "Usage: $0 [--env kind or --env ocp]" >& 2
    exit 1
 fi
-
