@@ -29,11 +29,11 @@ fi
 : "Cleaning up from previous run of an e2e test"
 
 if [ $env == "kind" ];then
-    # kind delete cluster --name cluster1
-    # kind delete cluster --name cluster2
+    kind delete cluster --name cluster1
+    kind delete cluster --name cluster2
     kind delete cluster --name kubeflex
-    # kubectl config delete-context cluster1 || true
-    # kubectl config delete-context cluster2 || true
+    kubectl config delete-context cluster1 || true
+    kubectl config delete-context cluster2 || true
 
 elif [ $env == "ocp" ];then
     # Unregister the managed clusters
