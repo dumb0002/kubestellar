@@ -62,17 +62,12 @@ if [ $env == "kind" ];then
     "${SRC_DIR}/use-kubestellar.sh"
 
 elif [ $env == "ocp" ];then
-  bash <(curl -s https://raw.githubusercontent.com/dumb0002/kubestellar/release-test-ocp/test/e2e/common/cleanup.sh) --env ocp
-  source <(curl -s https://raw.githubusercontent.com/dumb0002/kubestellar/release-test-ocp/test/e2e/common/setup-shell.sh)
-  bash <(curl -s https://raw.githubusercontent.com/dumb0002/kubestellar/release-test-ocp/test/e2e/common/setup-kubestellar-ocp.sh)
-  bash <(curl -s https://raw.githubusercontent.com/dumb0002/kubestellar/release-test-ocp/test/e2e/multi-cluster-deployment/use-kubestellar.sh) --env ocp
-
-  #  bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/common/cleanup.sh) --env ocp
-  #  source <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/common/setup-shell.sh)
-  #  bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/common/setup-kubestellar-ocp.sh)
-  #  bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/multi-cluster-deployment/use-kubestellar.sh) --env ocp
+   bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/common/cleanup.sh) --env ocp
+   source <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/common/setup-shell.sh)
+   bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/common/setup-kubestellar-ocp.sh)
+   bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/multi-cluster-deployment/use-kubestellar.sh) --env ocp
 else
    echo "$0: unknown flag option" >&2 ;
-   echo "Usage: $0 [--env kind or --env ocp]" >& 2
+   echo "Usage: $0 [--env kind | --env ocp]" >& 2
    exit 1
 fi
