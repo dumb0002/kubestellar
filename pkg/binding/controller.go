@@ -58,7 +58,6 @@ const (
 // Resource groups to exclude for watchers as they should not be delivered to other clusters
 var excludedGroups = map[string]bool{
 	"flowcontrol.apiserver.k8s.io": true,
-	"scheduling.k8s.io":            true,
 	"discovery.k8s.io":             true,
 	"apiregistration.k8s.io":       true,
 	"coordination.k8s.io":          true,
@@ -108,7 +107,7 @@ type Controller struct {
 }
 
 // Create a new binding controller
-func NewController(parentLogger logr.Logger, wdsRestConfig *rest.Config, imbsRestConfig *rest.Config,
+func NewController(parentLogger logr.Logger, wdsRestConfig *rest.Config, itsRestConfig *rest.Config,
 	wdsName string, allowedGroupsSet sets.Set[string]) (*Controller, error) {
 	logger := parentLogger.WithName(controllerName)
 
@@ -148,12 +147,12 @@ func NewController(parentLogger logr.Logger, wdsRestConfig *rest.Config, imbsRes
 		return nil, err
 	}
 
-	ocmClientset, err := ocmclientset.NewForConfig(imbsRestConfig)
+	ocmClientset, err := ocmclientset.NewForConfig(itsRestConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	ocmClient := ocm.GetOCMClient(imbsRestConfig)
+	ocmClient := ocm.GetOCMClient(itsRestConfig)
 
 	return makeController(logger, dynamicClient, kubernetesClient, extClient, ocmClientset, ocmClient, apiResourceLists, wdsName, allowedGroupsSet)
 }
