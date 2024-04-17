@@ -21,5 +21,3 @@ package v1alpha1
 type BindingExpansion interface{}
 
 type BindingPolicyExpansion interface{}
-
-type CustomTransformExpansion interface{}

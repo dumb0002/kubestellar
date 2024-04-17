@@ -129,17 +129,17 @@ func main() {
 	}
 	setupLog.Info("Got config for WDS", "name", wdsName)
 
-	// get the config for ITS
-	setupLog.Info("Getting config for ITS")
-	itsRestConfig, itsName, err := util.GetITSKubeconfig(setupLog, itsName)
+	// get the config for IMBS
+	setupLog.Info("Getting config for IMBS")
+	imbsRestConfig, imbsName, err := util.GetIMBSKubeconfig(setupLog, itsName)
 	if err != nil {
-		setupLog.Error(err, "unable to get ITS kubeconfig")
+		setupLog.Error(err, "unable to get IMBS kubeconfig")
 		os.Exit(1)
 	}
-	setupLog.Info("Got config for ITS", "name", itsName)
+	setupLog.Info("Got config for IMBS", "name", imbsName)
 
 	// start the binding controller
-	bindingController, err := binding.NewController(mgr.GetLogger(), wdsRestConfig, itsRestConfig, wdsName, allowedGroupsSet)
+	bindingController, err := binding.NewController(mgr.GetLogger(), wdsRestConfig, imbsRestConfig, wdsName, allowedGroupsSet)
 	if err != nil {
 		setupLog.Error(err, "unable to create binding controller")
 		os.Exit(1)
@@ -163,8 +163,8 @@ func main() {
 	}
 
 	// check if status add-on present and if yes start the status controller
-	if util.CheckWorkStatusPresence(itsRestConfig) {
-		statusController, err := status.NewController(wdsRestConfig, itsRestConfig, wdsName)
+	if util.CheckWorkStatusPresence(imbsRestConfig) {
+		statusController, err := status.NewController(wdsRestConfig, imbsRestConfig, wdsName)
 		if err != nil {
 			setupLog.Error(err, "unable to create status controller")
 			os.Exit(1)

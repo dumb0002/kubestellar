@@ -28,8 +28,6 @@ type Interface interface {
 	Bindings() BindingInformer
 	// BindingPolicies returns a BindingPolicyInformer.
 	BindingPolicies() BindingPolicyInformer
-	// CustomTransforms returns a CustomTransformInformer.
-	CustomTransforms() CustomTransformInformer
 }
 
 type version struct {
@@ -51,9 +49,4 @@ func (v *version) Bindings() BindingInformer {
 // BindingPolicies returns a BindingPolicyInformer.
 func (v *version) BindingPolicies() BindingPolicyInformer {
 	return &bindingPolicyInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
-}
-
-// CustomTransforms returns a CustomTransformInformer.
-func (v *version) CustomTransforms() CustomTransformInformer {
-	return &customTransformInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }

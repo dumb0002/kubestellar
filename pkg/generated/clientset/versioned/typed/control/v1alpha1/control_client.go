@@ -31,7 +31,6 @@ type ControlV1alpha1Interface interface {
 	RESTClient() rest.Interface
 	BindingsGetter
 	BindingPoliciesGetter
-	CustomTransformsGetter
 }
 
 // ControlV1alpha1Client is used to interact with features provided by the control.kubestellar.io group.
@@ -45,10 +44,6 @@ func (c *ControlV1alpha1Client) Bindings() BindingInterface {
 
 func (c *ControlV1alpha1Client) BindingPolicies() BindingPolicyInterface {
 	return newBindingPolicies(c)
-}
-
-func (c *ControlV1alpha1Client) CustomTransforms() CustomTransformInterface {
-	return newCustomTransforms(c)
 }
 
 // NewForConfig creates a new ControlV1alpha1Client for the given config.
