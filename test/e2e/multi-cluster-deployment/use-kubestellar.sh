@@ -78,16 +78,16 @@ spec:
 EOF
 
 
-if [ $env == "ocp" ];then
-    function add_permissions() {
-        cluster=$1
-        kubectl --context $cluster oc adm policy add-scc-to-user anyuid -z default -n nginx
-        kubectl --context $cluster -n nginx scale deploy nginx-deployment --replicas=0
-        kubectl --context $cluster -n nginx scale deploy nginx-deployment --replicas=1
-    }
-    add_permissions cluster1
-    add_permissions cluster2
-fi 
+# if [ $env == "ocp" ];then
+#     function add_permissions() {
+#         cluster=$1
+#         oc --context $cluster adm policy add-scc-to-user anyuid -z default -n nginx
+#         kubectl --context $cluster -n nginx scale deploy nginx-deployment --replicas=0
+#         kubectl --context $cluster -n nginx scale deploy nginx-deployment --replicas=1
+#     }
+#     add_permissions cluster1
+#     add_permissions cluster2
+# fi 
 
 :
 : -------------------------------------------------------------------------

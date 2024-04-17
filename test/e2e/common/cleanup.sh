@@ -29,18 +29,17 @@ fi
 : "Cleaning up from previous run of an e2e test"
 
 if [ $env == "kind" ];then
-    kind delete cluster --name cluster1
-    kind delete cluster --name cluster2
+    # kind delete cluster --name cluster1
+    # kind delete cluster --name cluster2
     kind delete cluster --name kubeflex
-    kubectl config delete-context cluster1 || true
-    kubectl config delete-context cluster2 || true
-fi
+    # kubectl config delete-context cluster1 || true
+    # kubectl config delete-context cluster2 || true
 
-
-if [ $env == "ocp" ];then
+elif [ $env == "ocp" ];then
     # Unregister the managed clusters
     function unregister_cluster() {
         cluster=$1
+        kubectl --context $cluster delete ns nginx
         clusteradm unjoin --cluster-name $cluster
         kubectl --context $cluster delete ns open-cluster-management open-cluster-management-agent open-cluster-management-agent-addon
     }
@@ -57,10 +56,15 @@ if [ $env == "ocp" ];then
     kubectl delete ns kubeflex-system
 
     # Unset the kubeconfig contexts
-    kubectl config unset contexts.imbs1
+    kubectl config unset contexts.its1
     kubectl config unset contexts.wds1
     kubectl config unset contexts.wds2
+else
+   echo "$0: unknown flag option" >&2 ;
+   echo "Usage: $0 [--env kind | ocp]" >& 2
+   exit 1
 fi
+
 
 
 
