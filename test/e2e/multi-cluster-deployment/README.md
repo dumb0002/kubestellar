@@ -10,7 +10,7 @@ The transport controller will be invoked with `-v=4` unless othewise specified o
 
 Starting from a local directory containing the git repo, do the following.
 
-```
+```bash 
 cd test/e2e/multi-cluster-deployment
 ./run-test.sh
 ```
@@ -36,9 +36,22 @@ $ kubectl config rename-context <default-wec1-context-name> kscore
 
 2. Run e2e test in your ocp cluster:
 
-```
+a. Run bash tests:
+
+```bash 
  export KUBESTELLAR_VERSION=0.22.0
  export OCM_STATUS_ADDON_VERSION=0.2.0-rc8
  export OCM_TRANSPORT_PLUGIN=0.1.7
- bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/multi-cluster-deployment/run-test.sh) --env ocp
+ export RELEASE_BRANCH=main
+ bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/multi-cluster-deployment/run-test.sh) --env ocp
+```
+
+b. Run ginkgo tests:
+
+```bash 
+export KUBESTELLAR_VERSION=0.22.0
+export OCM_STATUS_ADDON_VERSION=0.2.0-rc8
+export OCM_TRANSPORT_PLUGIN=0.1.7
+export RELEASE_BRANCH=main
+bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/multi-cluster-deployment/run-test.sh) --env ocp --type ginkgo
 ```
