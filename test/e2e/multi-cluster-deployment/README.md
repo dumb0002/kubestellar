@@ -10,10 +10,20 @@ The transport controller will be invoked with `-v=4` unless othewise specified o
 
 Starting from a local directory containing the git repo, do the following.
 
+a. Run bash tests:
+
 ```bash 
 cd test/e2e/multi-cluster-deployment
 ./run-test.sh
 ```
+
+b. Run ginkgo tests:
+
+```bash 
+cd test/e2e/multi-cluster-deployment
+./run-test.sh --type ginkgo
+```
+
 
 ## Running the test in three existing OCP clusters
 

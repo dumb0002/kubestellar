@@ -63,6 +63,12 @@ elif [ $env == "ocp" ];then
     kubectl config unset contexts.its1
     kubectl config unset contexts.wds1
     kubectl config unset contexts.wds2
+
+    # Remove files
+    rm -f /tmp/multiple_cluster_deployment_test.go
+    rm -f /tmp/ginkgo_suite_test.go
+    rm -f /tmp/go.mod
+    rm -f /tmp/go.sum
 else
    echo "$0: unknown flag option" >&2 ;
    echo "Usage: $0 [--env kind | ocp]" >& 2

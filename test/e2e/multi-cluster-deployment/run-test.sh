@@ -24,7 +24,7 @@ type="bash"
 
 while [ $# != 0 ]; do
     case "$1" in
-        (-h|--help) echo "$0 usage: (--released | --env | --kubestellar-controller-manager-verbosity \$num | --transport-controller-verbosity \$num)*"
+        (-h|--help) echo "$0 usage: (--released | --env | --type | --kubestellar-controller-manager-verbosity \$num | --transport-controller-verbosity \$num)*"
                     exit;;
         (--released) setup_flags="$setup_flags $1";;
         (--kubestellar-controller-manager-verbosity|--transport-controller-verbosity)
@@ -43,6 +43,14 @@ while [ $# != 0 ]; do
             echo "Missing environment value" >&2
             exit 1;
           fi;;
+        (--type)
+          if (( $# > 1 )); then
+              type="$2"
+              shift
+            else
+              echo "Missing test type value" >&2
+              exit 1;
+            fi;;
         (*) echo "$0: unrecognized argument '$1'" >&2
             exit 1
     esac
@@ -70,18 +78,21 @@ if [ $env == "kind" ];then
     fi
 
 elif [ $env == "ocp" ];then
-     bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/common/cleanup.sh) --env ocp
-     source <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/common/setup-shell.sh)
-     bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/common/setup-kubestellar-ocp.sh)
+      #bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/common/cleanup.sh) --env ocp
+      source <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/common/setup-shell.sh)
+      bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/release-$KUBESTELLAR_VERSION/test/e2e/common/setup-kubestellar-ocp.sh)
 
-    if [ $type == "bash" ]; then
-        bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/multi-cluster-deployment/use-kubestellar.sh) --env ocp
+      if [ $type == "bash" ]; then
+          bash <(curl -s https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/multi-cluster-deployment/use-kubestellar.sh) --env ocp
 
-    elif [ $type == "ginkgo" ]; then
-        curl -o /tmp/multiple_cluster_deployment_test.go  https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/ginkgo/multiple_cluster_deployment_test.go
-        curl -o /tmp/ginkgo_suite_test.go https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/ginkgo/ginkgo_suite_test.go
-        KFLEX_DISABLE_CHATTY=true ginkgo --vv --trace --no-color /tmp -- -skip-setup
-    fi
+      elif [ $type == "ginkgo" ]; then
+          curl -o /tmp/multiple_cluster_deployment_test.go  https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/ginkgo/multiple_cluster_deployment_test.go
+          curl -o /tmp/ginkgo_suite_test.go https://raw.githubusercontent.com/kubestellar/kubestellar/$RELEASE_BRANCH/test/e2e/ginkgo/ginkgo_suite_test.go
+          cd /tmp
+          go mod init ginkgo-test
+          go mod tidy
+          KFLEX_DISABLE_CHATTY=true ginkgo --vv --trace --no-color /tmp -- -skip-setup
+      fi
 else
    echo "$0: unknown flag option" >&2 ;
    echo "Usage: $0 [--env kind | --env ocp]" >& 2
