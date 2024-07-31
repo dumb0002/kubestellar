@@ -19,6 +19,7 @@ set -e # exit on error
 
 ctx="kind-kubeflex"
 wds="wds1"
+monitoring_ns="ks-monitoring"
 
 while [ $# != 0 ]; do
     case "$1" in
@@ -40,6 +41,14 @@ while [ $# != 0 ]; do
             echo "Missing space-name value" >&2
             exit 1;
           fi;;
+        (--monitoring-ns)
+          if (( $# > 1 )); then
+            wds="$2"
+            shift
+          else
+            echo "Missing monitoring-ns value" >&2
+            exit 1;
+          fi;;
     esac
     shift
 done
@@ -59,7 +68,7 @@ sed s/%WDS_NS%/$wds-system/g ${SCRIPT_DIR}/configuration/kube-rbac-proxy-config.
 kubectl -n $wds-system apply -f ${SCRIPT_DIR}/configuration/ks-ctl-manager-svc.yaml
 
 : 3. Create service monitor for KS ctl manager
-sed s/%WDS_NS%/$wds-system/g ${SCRIPT_DIR}/configuration/ks-ctl-manager-sm.yaml | kubectl -n ks-monitoring apply -f -
+sed s/%WDS_NS%/$wds-system/g ${SCRIPT_DIR}/configuration/ks-ctl-manager-sm.yaml | kubectl -n $monitoring_ns apply -f -
 
 
 : --------------------------------------------------------------------
@@ -83,7 +92,7 @@ kubectl -n $wds-system apply -f ${SCRIPT_DIR}/configuration/ks-transport-ctl-svc
 kubectl -n $wds-system get deploy transport-controller -o yaml | yq '(del(.status) |.spec.template.spec.containers.[0].ports[0].name |= "metrics")' | yq '.spec.template.spec.containers.[0].ports[0].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[0].containerPort |= 8090' | yq '.spec.template.spec.containers.[0].ports[1].name |= "pprof"' | yq '.spec.template.spec.containers.[0].ports[1].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[1].containerPort |= 8092' | kubectl --context $ctx apply --namespace=$wds-system -f -
 
 : 3. Create the service monitor:
-sed s/%WDS_NS%/$wds-system/g ${SCRIPT_DIR}/configuration/ks-transport-ctl-sm.yaml | kubectl -n ks-monitoring apply -f -
+sed s/%WDS_NS%/$wds-system/g ${SCRIPT_DIR}/configuration/ks-transport-ctl-sm.yaml | kubectl -n $monitoring_ns apply -f -
 
 
 : --------------------------------------------------------------------
@@ -97,17 +106,17 @@ kubectl -n $wds-system get deploy transport-controller -o yaml | yq '.spec.templ
 : Configure WDS API server pod for prometheus scraping
 : --------------------------------------------------------------------
 : 1. Create a SA and give the right RBAC to talk to the wds1 API server
-kubectl --context $wds get ns ks-monitoring || kubectl --context $wds create ns ks-monitoring
-kubectl --context $wds -n ks-monitoring apply -f ${SCRIPT_DIR}/prometheus/prometheus-rbac.yaml
+kubectl --context $wds get ns $monitoring_ns || kubectl --context $wds create ns $monitoring_ns
+kubectl --context $wds -n $monitoring_ns apply -f ${SCRIPT_DIR}/prometheus/prometheus-rbac.yaml
 
 : 2. Create token secret for prometheus in the target wds space
-kubectl --context $wds -n ks-monitoring apply -f ${SCRIPT_DIR}/configuration/prometheus-wds-secret.yaml
+kubectl --context $wds -n $monitoring_ns apply -f ${SCRIPT_DIR}/configuration/prometheus-wds-secret.yaml
 
 : 3. Copy secret from wds space and re-create it in prometheus NS in core or host kubeflex cluster:
-kubectl --context $wds -n ks-monitoring get secret prometheus-secret -o yaml | yq '.metadata |= (del(.annotations) |.annotations."kubernetes.io/service-account.name" |= "prometheus-kube-prometheus-prometheus") |= with_entries(select(.key == "name" or .key == "annotations"))' | kubectl --context $ctx apply --namespace=ks-monitoring -f -
+kubectl --context $wds -n $monitoring_ns get secret prometheus-secret -o yaml | yq '.metadata |= (del(.annotations) |.annotations."kubernetes.io/service-account.name" |= "prometheus-kube-prometheus-prometheus") |= with_entries(select(.key == "name" or .key == "annotations"))' | kubectl --context $ctx apply --namespace=$monitoring_ns -f -
 
 : 4. Add label to the wds apiserver service
 kubectl -n $wds-system label svc/$wds app=kube-apiserver
 
 : 5. Create the service monitor for prometheus to talk with wds apiserver
-sed s/%WDS_NS%/$wds-system/g ${SCRIPT_DIR}/configuration/wds-apiserver-sm.yaml | kubectl -n ks-monitoring apply -f -
+sed s/%WDS_NS%/$wds-system/g ${SCRIPT_DIR}/configuration/wds-apiserver-sm.yaml | kubectl -n $monitoring_ns apply -f -
