@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Copyright 2024 The KubeStellar Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -x # echo so that users can understand what is happening
+set -e # exit on error
+
+ctx="kind-kubeflex"
+its="its1"
+monitoring_ns="ks-monitoring"
+
+while [ $# != 0 ]; do
+    case "$1" in
+        (-h|--help) echo "$0 usage: ( --host-cluster-context (e.g., --host-cluster-context core-cluster (default value: kind-kubeflex)) | --space-name (e.g., --space-name its1 (default value: its1)) | --monitoring-ns (e.g., --monitoring-ns ks-monitoring (default value: ks-monitoring))*"
+                    exit;;
+        (--host-cluster-context)
+          if (( $# > 1 )); then
+            ctx="$2"
+            shift
+          else
+            echo "Missing host-cluster-context value" >&2
+            exit 1;
+          fi;;
+        (--space-name)
+          if (( $# > 1 )); then
+            its="$2"
+            shift
+          else
+            echo "Missing space-name value" >&2
+            exit 1;
+          fi;;
+        (--monitoring-ns)
+          if (( $# > 1 )); then
+            wds="$2"
+            shift
+          else
+            echo "Missing monitoring-ns value" >&2
+            exit 1;
+          fi;;
+    esac
+    shift
+done
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+
+# set core context
+kubectl config use-context $ctx
+
+: --------------------------------------------------------------------
+: Configure addon-status controller pod for prometheus scraping
+: --------------------------------------------------------------------
+pod_name=$(kubectl -n its1-system get pods -o=jsonpath='{range .items..metadata}{.name}{"\n"}{end}' | grep addon-status-controller-*)
+
+: 1. Create addon-status controller service:
+kubectl -n $wds-system apply -f ${SCRIPT_DIR}/configuration/ks-transport-ctl-svc.yaml
+
+: 2. Adding declarations of the metrics and pprof ports, so that addon-status service definition can refer to it by name
+kubectl -n $wds-system get pod $pod_name -o yaml | yq '(del(.status) |.spec.template.spec.containers.[0].ports[0].name |= "metrics")' | yq '.spec.template.spec.containers.[0].ports[0].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[0].containerPort |= 8090' | yq '.spec.template.spec.containers.[0].ports[1].name |= "pprof"' | yq '.spec.template.spec.containers.[0].ports[1].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[1].containerPort |= 8092' | kubectl --context $ctx apply --namespace=$wds-system -f -
+
+: 3. Create the service monitor:
+sed s/%WDS_NS%/$wds-system/g ${SCRIPT_DIR}/configuration/ks-transport-ctl-sm.yaml | kubectl -n $monitoring_ns apply -f -
+
+
+: --------------------------------------------------------------------
+: Configure addon-status controller pod for pyroscope scraping
+: --------------------------------------------------------------------
+kubectl -n $wds-system get pod $pod_name -o yaml | yq '.spec.template.metadata.annotations."profiles.grafana.com/cpu.port" |= "8092" |  .spec.template.metadata.annotations."profiles.grafana.com/cpu.scrape"|= "true" | .spec.template.metadata.annotations."profiles.grafana.com/goroutine.port" |= "8092" | .spec.template.metadata.annotations."profiles.grafana.com/goroutine.scrape" |= "true" |
+.spec.template.metadata.annotations."profiles.grafana.com/memory.port" |= "8092" | .spec.template.metadata.annotations."profiles.grafana.com/memory.scrape" |= "true"' | kubectl -n $wds-system apply -f -
