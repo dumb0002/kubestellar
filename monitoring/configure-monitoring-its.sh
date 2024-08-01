@@ -43,7 +43,7 @@ while [ $# != 0 ]; do
           fi;;
         (--monitoring-ns)
           if (( $# > 1 )); then
-            wds="$2"
+            its="$2"
             shift
           else
             echo "Missing monitoring-ns value" >&2
@@ -62,19 +62,21 @@ kubectl config use-context $ctx
 : Configure addon-status controller pod for prometheus scraping
 : --------------------------------------------------------------------
 pod_name=$(kubectl -n its1-system get pods -o=jsonpath='{range .items..metadata}{.name}{"\n"}{end}' | grep addon-status-controller-*)
+pod_label=$(kubectl -n its1-system get pod $pod_name -o jsonpath='{.metadata.labels}' | jq | grep "status-controller" | tr "," " ")
 
 : 1. Create addon-status controller service:
-kubectl -n $wds-system apply -f ${SCRIPT_DIR}/configuration/ks-transport-ctl-svc.yaml
+sed s/%STATUS_CTL_LABEL%/$pod_label/g ${SCRIPT_DIR}/configuration/status-addon-ctl-svc.yaml | kubectl -n $monitoring_ns apply -f -
+#kubectl -n $its-system apply -f ${SCRIPT_DIR}/configuration/status-addon-ctl-svc.yaml
 
 : 2. Adding declarations of the metrics and pprof ports, so that addon-status service definition can refer to it by name
-kubectl -n $wds-system get pod $pod_name -o yaml | yq '(del(.status) |.spec.template.spec.containers.[0].ports[0].name |= "metrics")' | yq '.spec.template.spec.containers.[0].ports[0].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[0].containerPort |= 8090' | yq '.spec.template.spec.containers.[0].ports[1].name |= "pprof"' | yq '.spec.template.spec.containers.[0].ports[1].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[1].containerPort |= 8092' | kubectl --context $ctx apply --namespace=$wds-system -f -
+kubectl --context $its -n open-cluster-management get deploy addon-status-controller -o yaml | yq '(del(.status) |.spec.template.spec.containers.[0].ports[0].name |= "metrics")' | yq '.spec.template.spec.containers.[0].ports[0].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[0].containerPort |= 8090' | yq '.spec.template.spec.containers.[0].ports[1].name |= "pprof"' | yq '.spec.template.spec.containers.[0].ports[1].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[1].containerPort |= 8092' | kubectl --context $ctx apply --namespace=$its-system -f -
 
 : 3. Create the service monitor:
-sed s/%WDS_NS%/$wds-system/g ${SCRIPT_DIR}/configuration/ks-transport-ctl-sm.yaml | kubectl -n $monitoring_ns apply -f -
+sed s/%WDS_NS%/$its-system/g ${SCRIPT_DIR}/configuration/status-addon-ctl-sm.yaml | kubectl -n $monitoring_ns apply -f -
 
 
 : --------------------------------------------------------------------
 : Configure addon-status controller pod for pyroscope scraping
 : --------------------------------------------------------------------
-kubectl -n $wds-system get pod $pod_name -o yaml | yq '.spec.template.metadata.annotations."profiles.grafana.com/cpu.port" |= "8092" |  .spec.template.metadata.annotations."profiles.grafana.com/cpu.scrape"|= "true" | .spec.template.metadata.annotations."profiles.grafana.com/goroutine.port" |= "8092" | .spec.template.metadata.annotations."profiles.grafana.com/goroutine.scrape" |= "true" |
-.spec.template.metadata.annotations."profiles.grafana.com/memory.port" |= "8092" | .spec.template.metadata.annotations."profiles.grafana.com/memory.scrape" |= "true"' | kubectl -n $wds-system apply -f -
+kubectl -n $its-system get pod $pod_name -o yaml | yq '.spec.template.metadata.annotations."profiles.grafana.com/cpu.port" |= "9282" |  .spec.template.metadata.annotations."profiles.grafana.com/cpu.scrape"|= "true" | .spec.template.metadata.annotations."profiles.grafana.com/goroutine.port" |= "9282" | .spec.template.metadata.annotations."profiles.grafana.com/goroutine.scrape" |= "true" |
+.spec.template.metadata.annotations."profiles.grafana.com/memory.port" |= "9282" | .spec.template.metadata.annotations."profiles.grafana.com/memory.scrape" |= "true"' | kubectl -n $its-system apply -f -
