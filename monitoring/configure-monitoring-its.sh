@@ -72,7 +72,7 @@ sed s/%STATUS_CTL_LABEL%/$pod_label/g ${SCRIPT_DIR}/configuration/status-addon-c
 kubectl --context $its -n open-cluster-management get deploy addon-status-controller -o yaml | yq '(del(.status) |.spec.template.spec.containers.[0].ports[0].name |= "metrics")' | yq '.spec.template.spec.containers.[0].ports[0].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[0].containerPort |= 8090' | yq '.spec.template.spec.containers.[0].ports[1].name |= "pprof"' | yq '.spec.template.spec.containers.[0].ports[1].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[1].containerPort |= 8092' | kubectl --context $ctx apply --namespace=$its-system -f -
 
 : 3. Create the service monitor:
-sed s/%WDS_NS%/$its-system/g ${SCRIPT_DIR}/configuration/status-addon-ctl-sm.yaml | kubectl -n $monitoring_ns apply -f -
+sed s/%ITS_NS%/$its-system/g ${SCRIPT_DIR}/configuration/status-addon-ctl-sm.yaml | kubectl -n $monitoring_ns apply -f -
 
 
 : --------------------------------------------------------------------
