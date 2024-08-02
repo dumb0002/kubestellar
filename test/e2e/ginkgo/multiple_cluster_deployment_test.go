@@ -199,17 +199,93 @@ var _ = ginkgo.Describe("end to end testing", func() {
 			util.ValidateNumDeployments(ctx, wec2, ns, 0)
 		})
 
-		ginkgo.It("shards a wrapped workload when needed", func(ctx context.Context) {
+		ginkgo.It("shards a wrapped workload based on max-num-wrapped", func(ctx context.Context) {
 			util.DeleteDeployment(ctx, wds, ns, "nginx")
+			originalArgs := util.ReadContainerArgsInDeployment(ctx, coreCluster, "wds1-system", "transport-controller", "transport-controller")
+			originalArgsBytes, err := json.Marshal(originalArgs)
+			gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			originalArgsPatch := []byte(fmt.Sprintf(`{"spec":{"template":{"spec":{"containers":[{"args":%s,"name":"transport-controller"}]}}}}`, string(originalArgsBytes)))
+			changedArgs := append(originalArgs, "--max-num-wrapped=2")
+			changedArgsBytes, err := json.Marshal(changedArgs)
+			gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			changedArgsPatch := []byte(fmt.Sprintf(`{"spec":{"template":{"spec":{"containers":[{"args":%s,"name":"transport-controller"}]}}}}`, string(changedArgsBytes)))
+
+			ginkgo.By("setting max num of wrapped object to 2")
 			ginkgo.DeferCleanup(func(ctx context.Context) {
-				patch := []byte(`{"spec":{"template":{"spec":{"containers":[{"args":["--max-size-wrapped-object=512000","--transport-kubeconfig=/mnt/shared/transport-kubeconfig","--wds-kubeconfig=/mnt/shared/wds-kubeconfig","--wds-name=wds1","-v=4"],"name":"transport-controller"}]}}}}`)
-				_, err := coreCluster.AppsV1().Deployments("wds1-system").Patch(ctx, "transport-controller", types.StrategicMergePatchType, patch, metav1.PatchOptions{})
+				_, err = coreCluster.AppsV1().Deployments("wds1-system").Patch(ctx, "transport-controller", types.StrategicMergePatchType, originalArgsPatch, metav1.PatchOptions{})
 				gomega.Expect(err).NotTo(gomega.HaveOccurred())
 			})
-			ginkgo.By("setting max size of wrapped object to 1000 bytes")
-			patch := []byte(`{"spec":{"template":{"spec":{"containers":[{"args":["--max-size-wrapped-object=1000","--transport-kubeconfig=/mnt/shared/transport-kubeconfig","--wds-kubeconfig=/mnt/shared/wds-kubeconfig","--wds-name=wds1","-v=4"],"name":"transport-controller"}]}}}}`)
-			_, err := coreCluster.AppsV1().Deployments("wds1-system").Patch(ctx, "transport-controller", types.StrategicMergePatchType, patch, metav1.PatchOptions{})
+			_, err = coreCluster.AppsV1().Deployments("wds1-system").Patch(ctx, "transport-controller", types.StrategicMergePatchType, changedArgsPatch, metav1.PatchOptions{})
 			gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			util.WaitForDepolymentAvailability(ctx, coreCluster, "wds1-system", "transport-controller")
+
+			var names = []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}
+			for _, i := range names {
+				util.CreateDeployment(ctx, wds, ns, i,
+					map[string]string{
+						"label1": "test1",
+					})
+			}
+			util.CreateBindingPolicy(ctx, ksWds, "multipledep",
+				[]metav1.LabelSelector{
+					{MatchLabels: map[string]string{"name": "cluster1"}},
+				},
+				[]ksapi.DownsyncPolicyClause{
+					{DownsyncObjectTest: ksapi.DownsyncObjectTest{
+						ObjectSelectors: []metav1.LabelSelector{
+							{MatchLabels: map[string]string{"label1": "test1"}},
+						},
+					}},
+				},
+			)
+
+			// Expect addon-addon-status-deploy-0  and nginx-wds1 manifest works on both clusters.
+			// And the 5 manifestworks for the deployment on cluster1.
+			util.ValidateNumManifestworks(ctx, its, "cluster1", 7)
+			util.ValidateNumManifestworks(ctx, its, "cluster2", 2)
+			util.ValidateNumDeployments(ctx, wec1, ns, 10)
+			util.ValidateNumDeployments(ctx, wec2, ns, 0)
+
+			ginkgo.By("update to bindingpolicy object with sharded wrapped workloads updates deployments")
+			BPPatch := []byte(`{"spec": {"clusterSelectors": [{"matchLabels": {"name": "cluster2"}}]}}`)
+			_, err = ksWds.ControlV1alpha1().BindingPolicies().Patch(ctx, "multipledep", types.MergePatchType, BPPatch, metav1.PatchOptions{})
+			gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			// Expect addon-addon-status-deploy-0  and nginx-wds1 manifest works on both clusters.
+			// And the 5 manifestworks for the deployment on cluster2.
+			util.ValidateNumManifestworks(ctx, its, "cluster1", 2)
+			util.ValidateNumManifestworks(ctx, its, "cluster2", 7)
+			util.ValidateNumDeployments(ctx, wec1, ns, 0)
+			util.ValidateNumDeployments(ctx, wec2, ns, 10)
+
+			ginkgo.By("delete of bindingpolicy with sharded wrapped workloads deletes deployments")
+			util.DeleteBindingPolicy(ctx, ksWds, "multipledep")
+			// Expect addon-addon-status-deploy-0  and nginx-wds1 manifest works on both clusters.
+			util.ValidateNumManifestworks(ctx, its, "cluster1", 2)
+			util.ValidateNumManifestworks(ctx, its, "cluster2", 2)
+			util.ValidateNumDeployments(ctx, wec1, ns, 0)
+			util.ValidateNumDeployments(ctx, wec2, ns, 0)
+		})
+
+		ginkgo.It("shards a wrapped workload based on max-size-wrapped", func(ctx context.Context) {
+			util.DeleteDeployment(ctx, wds, ns, "nginx")
+			originalArgs := util.ReadContainerArgsInDeployment(ctx, coreCluster, "wds1-system", "transport-controller", "transport-controller")
+			originalArgsBytes, err := json.Marshal(originalArgs)
+			gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			originalArgsPatch := []byte(fmt.Sprintf(`{"spec":{"template":{"spec":{"containers":[{"args":%s,"name":"transport-controller"}]}}}}`, string(originalArgsBytes)))
+			changedArgs := append(originalArgs, "--max-size-wrapped=1000")
+			changedArgsBytes, err := json.Marshal(changedArgs)
+			gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			changedArgsPatch := []byte(fmt.Sprintf(`{"spec":{"template":{"spec":{"containers":[{"args":%s,"name":"transport-controller"}]}}}}`, string(changedArgsBytes)))
+
+			ginkgo.By("setting max size of wrapped object to 1000 bytes")
+			ginkgo.DeferCleanup(func(ctx context.Context) {
+				_, err = coreCluster.AppsV1().Deployments("wds1-system").Patch(ctx, "transport-controller", types.StrategicMergePatchType, originalArgsPatch, metav1.PatchOptions{})
+				gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			})
+			_, err = coreCluster.AppsV1().Deployments("wds1-system").Patch(ctx, "transport-controller", types.StrategicMergePatchType, changedArgsPatch, metav1.PatchOptions{})
+			gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			util.WaitForDepolymentAvailability(ctx, coreCluster, "wds1-system", "transport-controller")
+
 			var names = []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}
 			for _, i := range names {
 				util.CreateDeployment(ctx, wds, ns, i,
@@ -238,8 +314,8 @@ var _ = ginkgo.Describe("end to end testing", func() {
 			util.ValidateNumDeployments(ctx, wec2, ns, 0)
 
 			ginkgo.By("updating the bindingpolicy object with sharded wrapped workloads and expecting updated deployments")
-			patch = []byte(`{"spec": {"clusterSelectors": [{"matchLabels": {"name": "cluster2"}}]}}`)
-			_, err = ksWds.ControlV1alpha1().BindingPolicies().Patch(ctx, "multipledep", types.MergePatchType, patch, metav1.PatchOptions{})
+			BPPatch := []byte(`{"spec": {"clusterSelectors": [{"matchLabels": {"name": "cluster2"}}]}}`)
+			_, err = ksWds.ControlV1alpha1().BindingPolicies().Patch(ctx, "multipledep", types.MergePatchType, BPPatch, metav1.PatchOptions{})
 			gomega.Expect(err).NotTo(gomega.HaveOccurred())
 			// Expect addon-addon-status-deploy-0  and nginx-wds1 manifest works on both clusters.
 			// And the 10 manifestworks for the deployment on cluster2.
@@ -423,19 +499,35 @@ var _ = ginkgo.Describe("end to end testing", func() {
 			originalArgs := util.ReadContainerArgsInDeployment(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager", "manager")
 			originalArgsBytes, err := json.Marshal(originalArgs)
 			gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			originalArgsPatch := []byte(fmt.Sprintf(`{"spec":{"template":{"spec":{"containers":[{"args":%s,"name":"manager"}]}}}}`, string(originalArgsBytes)))
 			changedArgs := append(originalArgs, "--controllers=binding")
 			changedArgsBytes, err := json.Marshal(changedArgs)
 			gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			var scaledDown, semiCrashed bool
+			ginkgo.DeferCleanup(func(ctx context.Context) {
+				if semiCrashed {
+					_, err = coreCluster.AppsV1().Deployments("wds1-system").Patch(ctx, "kubestellar-controller-manager", types.StrategicMergePatchType, originalArgsPatch, metav1.PatchOptions{})
+					gomega.Expect(err).NotTo(gomega.HaveOccurred())
+				}
+				if scaledDown {
+					err = util.ScaleDeployment(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager", 1)
+					gomega.Expect(err).NotTo(gomega.HaveOccurred())
+				}
+			})
 
+			scaledDown = true
 			// Restart the controller manager without starting the status controller.
 			err = util.ScaleDeployment(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager", 0)
 			gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			util.WaitForDepolymentAvailability(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager")
 			changedArgsPatch := []byte(fmt.Sprintf(`{"spec":{"template":{"spec":{"containers":[{"args":%s,"name":"manager"}]}}}}`, string(changedArgsBytes)))
+			semiCrashed = true
 			_, err = coreCluster.AppsV1().Deployments("wds1-system").Patch(ctx, "kubestellar-controller-manager", types.StrategicMergePatchType, changedArgsPatch, metav1.PatchOptions{})
 			gomega.Expect(err).NotTo(gomega.HaveOccurred())
 			err = util.ScaleDeployment(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager", 1)
 			gomega.Expect(err).NotTo(gomega.HaveOccurred())
-			util.ExpectDepolymentAvailability(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager")
+			scaledDown = false
+			util.WaitForDepolymentAvailability(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager")
 
 			// At this time, the status controller should not be running, this is a simulation of a crush.
 			BPPatch := []byte(`{"spec":{"clusterSelectors":[{"matchLabels":{"name":"CelestialNexus"}}]}}`)
@@ -445,15 +537,18 @@ var _ = ginkgo.Describe("end to end testing", func() {
 			util.ValidateNumDeployments(ctx, wec1, ns, 0)
 			util.ValidateNumDeployments(ctx, wec2, ns, 0)
 
+			scaledDown = true
 			// Restart the controller manager normally.
 			err = util.ScaleDeployment(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager", 0)
 			gomega.Expect(err).NotTo(gomega.HaveOccurred())
-			originalArgsPatch := []byte(fmt.Sprintf(`{"spec":{"template":{"spec":{"containers":[{"args":%s,"name":"manager"}]}}}}`, string(originalArgsBytes)))
+			util.WaitForDepolymentAvailability(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager")
 			_, err = coreCluster.AppsV1().Deployments("wds1-system").Patch(ctx, "kubestellar-controller-manager", types.StrategicMergePatchType, originalArgsPatch, metav1.PatchOptions{})
 			gomega.Expect(err).NotTo(gomega.HaveOccurred())
+			semiCrashed = false
 			err = util.ScaleDeployment(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager", 1)
 			gomega.Expect(err).NotTo(gomega.HaveOccurred())
-			util.ExpectDepolymentAvailability(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager")
+			scaledDown = false
+			util.WaitForDepolymentAvailability(ctx, coreCluster, "wds1-system", "kubestellar-controller-manager")
 
 			// The status controller, 'recovered' from the simulated crush, should drive the singleton status
 			// of the Deployment towards eventual consistency, i.e. clean the 'previously synced but currently invalid' status.
