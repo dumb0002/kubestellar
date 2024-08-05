@@ -65,8 +65,7 @@ pod_name=$(kubectl -n its1-system get pods -o=jsonpath='{range .items..metadata}
 pod_label=$(kubectl -n its1-system get pod $pod_name -o jsonpath='{.metadata.labels}' | jq | grep "status-controller" | tr "," " ")
 
 : 1. Create addon-status controller service:
-sed s/%STATUS_CTL_LABEL%/$pod_label/g ${SCRIPT_DIR}/configuration/status-addon-ctl-svc.yaml | kubectl -n $monitoring_ns apply -f -
-#kubectl -n $its-system apply -f ${SCRIPT_DIR}/configuration/status-addon-ctl-svc.yaml
+sed "s^%STATUS_CTL_LABEL%^$pod_label^g" ${SCRIPT_DIR}/configuration/status-addon-ctl-svc.yaml | kubectl -n $monitoring_ns apply -f -
 
 : 2. Adding declarations of the metrics and pprof ports, so that addon-status service definition can refer to it by name
 kubectl --context $its -n open-cluster-management get deploy addon-status-controller -o yaml | yq '(del(.status) |.spec.template.spec.containers.[0].ports[0].name |= "metrics")' | yq '.spec.template.spec.containers.[0].ports[0].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[0].containerPort |= 8090' | yq '.spec.template.spec.containers.[0].ports[1].name |= "pprof"' | yq '.spec.template.spec.containers.[0].ports[1].protocol |= "TCP"' | yq '.spec.template.spec.containers.[0].ports[1].containerPort |= 8092' | kubectl --context $ctx apply --namespace=$its-system -f -
