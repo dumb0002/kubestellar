@@ -95,7 +95,7 @@ This example shows how to deploy monitoring tools (Prometheus, Grafana and Pyros
     - `NS`: name of the KubeStellar space namespace, e.g., *wds1-system*, *wds2-system*, *its1-system*, etc.
     - `APIService`: name of the service for the KS spaces APIserver, e.g., *wds1*, *wds2*, *vcluster*, etc.
 
-        <img src="images/wds-apiserver-monitoring.png" width="60%" height="80%" title="wds-apiserver-monitoring"> 
+        <img src="images/apiserver-monitoring.png" width="60%" height="80%" title="wds-apiserver-monitoring"> 
 
     To monitor a WDS space (e.g., wds1) use the following parameters: `NS: wds1-system` and `APIService: wds1`. Likewise, to monitor a ITS space (e.g., its1): `NS: its1-system` and `APIService: vcluster`
     
