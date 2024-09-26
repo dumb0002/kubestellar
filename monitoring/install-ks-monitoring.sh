@@ -74,10 +74,10 @@ if [ $opt == "core" ];then
     : --------------------------------------------------------------
     : Install Thanos with MinIO storage
 
-    : Install MinIO MinIO object storage for Thanos to store metrics
-    helm repo add minio https://charts.min.io/
-    helm install minio -n $ns -f ${SCRIPT_DIR}/prometheus/minio-custom-values.yaml minio/minio  --version 5.2.0
-    wait-for-object $ctx $ns statefulset minio
+    # : Install MinIO MinIO object storage for Thanos to store metrics
+    # helm repo add minio https://charts.min.io/
+    # helm install minio -n $ns -f ${SCRIPT_DIR}/prometheus/minio-custom-values.yaml minio/minio  --version 5.2.0
+    # wait-for-object $ctx $ns statefulset minio
 
     # Retrieve the MinIO credentials
     export ROOT_USER=$(kubectl get secret -n $ns minio -o jsonpath="{.data.rootUser}" | base64 -d)
@@ -124,10 +124,10 @@ if [ $opt == "core" ];then
     export thanos_host="thanos-receive.ks-monitoring.svc.cluster.local:19291"
     sed -e s/%THANOS_HOST%/$thanos_host/g ${SCRIPT_DIR}/prometheus/prometheus-custom-values.yaml >& /tmp/prometheus-custom-values-set.yaml
 
-    # Configure Pyroscope to connect to MinIO 
-    export ENDPOINT="minio:9000"
-    export BUCKET="pyroscope"
-    sed -e s/%ENDPOINT%/$ENDPOINT/g -e s/%BUCKET%/$BUCKET/g -e s/%USERNAME%/$ROOT_USER/g -e s/%PASSWORD%/$ROOT_PASSWORD/g ${SCRIPT_DIR}/grafana/pyroscope-config.yaml >& /tmp/pyroscope-config-values-set.yaml
+    # # Configure Pyroscope to connect to MinIO 
+    # export ENDPOINT="minio:9000"
+    # export BUCKET="pyroscope"
+    # sed -e s/%ENDPOINT%/$ENDPOINT/g -e s/%BUCKET%/$BUCKET/g -e s/%USERNAME%/$ROOT_USER/g -e s/%PASSWORD%/$ROOT_PASSWORD/g ${SCRIPT_DIR}/grafana/pyroscope-config.yaml >& /tmp/pyroscope-config-values-set.yaml
 
 elif [ $opt == "wec" ];then
   # Set the Thanos URL for Prometheus remote write
@@ -169,7 +169,9 @@ wait-for-object $ctx $ns statefulsets prometheus-prometheus-kube-prometheus-prom
 : Install Pyroscope
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
-helm -n $ns -f /tmp/pyroscope-config-values-set.yaml install pyroscope grafana/pyroscope --version 1.7.1
+#helm -n $ns -f /tmp/pyroscope-config-values-set.yaml install pyroscope grafana/pyroscope --version 1.7.1
+helm -n $ns install pyroscope grafana/pyroscope --version 1.7.1
+
 
 wait-for-object $ctx $ns statefulset pyroscope
 wait-for-object $ctx $ns statefulset pyroscope-alloy

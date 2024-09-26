@@ -2,19 +2,19 @@ replicas: 2
 
 persistence:
   enabled: true
-  size: 2Gi
+  size: 8Gi
 
 resources:
   requests:
-    memory: 2Gi
+    memory: 16Gi
 
-ingress:
-  enabled: false
+# ingress:
+#   enabled: false
 
-service:
-  type: NodePort
-  port: "9000"
-  nodePort: 32000
+# service:
+#   type: NodePort
+#   port: "9000"
+#   nodePort: 32000
   
 buckets:
   - name: thanos
