@@ -7,4 +7,16 @@ pyroscope:
         bucket_name: %BUCKET%
         access_key_id: %USERNAME%
         secret_access_key: %PASSWORD%
-        insecure: true
+        insecure: false
+  # WEC configuration should set "insecure: false otherwise set to `true` for core"
+  podSecurityContext:
+    fsGroup: null
+    runAsUser: null
+    runAsNonRoot: null
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # fsGroup: 1000800000
+    # runAsUser: 1000800000
+    # runAsNonRoot: true

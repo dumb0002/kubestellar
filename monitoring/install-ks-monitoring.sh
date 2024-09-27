@@ -20,7 +20,7 @@ set -e # exit on error
 ctx="kind-kubeflex"
 ns="ks-monitoring"
 opt="core" # (value: core or wec)
-hub_context="kind-kubeflex"
+hub_context="kscore"
 
 while [ $# != 0 ]; do
     case "$1" in
@@ -74,10 +74,11 @@ if [ $opt == "core" ];then
     : --------------------------------------------------------------
     : Install Thanos with MinIO storage
 
-    # : Install MinIO MinIO object storage for Thanos to store metrics
-    # helm repo add minio https://charts.min.io/
-    # helm install minio -n $ns -f ${SCRIPT_DIR}/prometheus/minio-custom-values.yaml minio/minio  --version 5.2.0
-    # wait-for-object $ctx $ns statefulset minio
+    : Install MinIO MinIO object storage for Thanos to store metrics
+    helm repo add minio https://charts.min.io/
+    helm install minio -n $ns -f ${SCRIPT_DIR}/prometheus/minio-custom-values.yaml minio/minio  --version 5.2.0
+    wait-for-object $ctx $ns statefulset minio
+    kubectl -n $ns apply -f ${SCRIPT_DIR}/prometheus/minio-route.yaml
 
     # Retrieve the MinIO credentials
     export ROOT_USER=$(kubectl get secret -n $ns minio -o jsonpath="{.data.rootUser}" | base64 -d)
@@ -98,6 +99,8 @@ if [ $opt == "core" ];then
     wait-for-object $ctx $ns deployment thanos-query
     wait-for-object $ctx $ns deployment thanos-query-frontend 
     wait-for-object $ctx $ns statefulsets thanos-storegateway
+    
+    kubectl -n $ns apply -f ${SCRIPT_DIR}/prometheus/thanos-route.yaml
 
     : --------------------------------------------------------------
     : Install Grafana
@@ -119,26 +122,27 @@ if [ $opt == "core" ];then
       --version 8.4.1
 
     wait-for-object $ctx $ns deployment grafana
+    kubectl -n $ns apply -f ${SCRIPT_DIR}/grafana/grafana-route.yaml
 
     # Set the Thanos URL for Prometheus remote write
     export thanos_host="thanos-receive.ks-monitoring.svc.cluster.local:19291"
     sed -e s/%THANOS_HOST%/$thanos_host/g ${SCRIPT_DIR}/prometheus/prometheus-custom-values.yaml >& /tmp/prometheus-custom-values-set.yaml
 
-    # # Configure Pyroscope to connect to MinIO 
-    # export ENDPOINT="minio:9000"
-    # export BUCKET="pyroscope"
-    # sed -e s/%ENDPOINT%/$ENDPOINT/g -e s/%BUCKET%/$BUCKET/g -e s/%USERNAME%/$ROOT_USER/g -e s/%PASSWORD%/$ROOT_PASSWORD/g ${SCRIPT_DIR}/grafana/pyroscope-config.yaml >& /tmp/pyroscope-config-values-set.yaml
+    # Configure Pyroscope to connect to MinIO 
+    export ENDPOINT="minio:9000"
+    export BUCKET="pyroscope"
+    sed -e s/%ENDPOINT%/$ENDPOINT/g -e s/%BUCKET%/$BUCKET/g -e s/%USERNAME%/$ROOT_USER/g -e s/%PASSWORD%/$ROOT_PASSWORD/g ${SCRIPT_DIR}/grafana/pyroscope-config.yaml >& /tmp/pyroscope-config-values-set.yaml
 
 elif [ $opt == "wec" ];then
   # Set the Thanos URL for Prometheus remote write
-  export thanos_host="kubeflex-control-plane:80"
+  export thanos_host=$(kubectl --context $hub_context -n $ns get route thanos-receive -o jsonpath="{.status.ingress[0].host}")
   sed -e s/%THANOS_HOST%/$thanos_host/g ${SCRIPT_DIR}/prometheus/prometheus-custom-values.yaml >& /tmp/prometheus-custom-values-set.yaml
 
   # Configure Pyroscope to connect to MinIO remote storage on the hosting cluster (hub)
   # (1) Retrieve the MinIO credentials
   export ROOT_USER=$(kubectl --context $hub_context get secret -n $ns minio -o jsonpath="{.data.rootUser}" | base64 -d)
   export ROOT_PASSWORD=$(kubectl --context $hub_context get secret -n $ns minio -o jsonpath="{.data.rootPassword}" | base64 -d)
-  export ENDPOINT="kubeflex-control-plane:32000"
+  export ENDPOINT=$(kubectl --context $hub_context -n $ns get route minio-api -o jsonpath="{.status.ingress[0].host}")
   export BUCKET="pyroscope"
 
   # (2) Configure Pyroscope
@@ -169,9 +173,7 @@ wait-for-object $ctx $ns statefulsets prometheus-prometheus-kube-prometheus-prom
 : Install Pyroscope
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
-#helm -n $ns -f /tmp/pyroscope-config-values-set.yaml install pyroscope grafana/pyroscope --version 1.7.1
-helm -n $ns install pyroscope grafana/pyroscope --version 1.7.1
-
+helm -n $ns -f /tmp/pyroscope-config-values-set.yaml install pyroscope grafana/pyroscope --version 1.7.1
 
 wait-for-object $ctx $ns statefulset pyroscope
 wait-for-object $ctx $ns statefulset pyroscope-alloy

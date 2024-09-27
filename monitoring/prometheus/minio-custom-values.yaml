@@ -2,11 +2,11 @@ replicas: 2
 
 persistence:
   enabled: true
-  size: 8Gi
+  size: 2Gi
 
 resources:
   requests:
-    memory: 16Gi
+    memory: 2Gi
 
 # ingress:
 #   enabled: false
@@ -15,7 +15,15 @@ resources:
 #   type: NodePort
 #   port: "9000"
 #   nodePort: 32000
-  
+
+securityContext:
+  enabled: null
+  runAsUser: null
+  runAsGroup: null
+  fsGroup: null
+  fsGroupChangePolicy: null
+  readOnlyRootFilesystem: null
+
 buckets:
   - name: thanos
     policy: none
