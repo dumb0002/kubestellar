@@ -7,11 +7,6 @@
 steps:
 - name: "{{$actionName}} workload k8s objects for long duration experiments"
   phases:
-  - tuningSet: {{$tuningSet}}
-      ReplicasPerNamespace: {{$namespaces}}
-      objectBundle:
-      - basename: {{$namespaceNamePrefix}}
-        objectTemplatePath: long-duration-exp-setup.yaml
   - NamespaceList: 
     - perf-test
     replicasPerNamespace: {{$numbeOfWorkloadObjects}}
