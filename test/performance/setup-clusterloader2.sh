@@ -34,6 +34,7 @@ cp $SCRIPT_DIR/workloads/modules/*  $CL2_DIR/testing/load/modules
 cp $SCRIPT_DIR/workloads/performance-test-config.yaml  $CL2_DIR/testing/load
 cp $SCRIPT_DIR/workloads/long-duration-exp-config.yaml  $CL2_DIR/testing/load
 cp $SCRIPT_DIR/workloads/long-duration-exp-workload.yaml $CL2_DIR/testing/load
+cp $SCRIPT_DIR/workloads/long-duration-exp-setup.yaml $CL2_DIR/testing/load
 
 if [ $env == "kind" ];then
    cp $SCRIPT_DIR/workloads/cluster-density-k8s/*  $CL2_DIR/testing/load
