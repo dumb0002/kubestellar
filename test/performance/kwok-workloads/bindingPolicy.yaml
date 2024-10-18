@@ -1,0 +1,10 @@
+apiVersion: control.kubestellar.io/v1alpha1
+kind: BindingPolicy
+metadata:
+  name: perf-test
+spec:
+  clusterSelectors:
+  - matchLabels: {"location-group":"edge"}
+  downsync:
+  - objectSelectors:
+    - matchLabels: {"app.kubernetes.io/name":"kwok"}
