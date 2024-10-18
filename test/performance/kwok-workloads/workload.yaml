@@ -5,7 +5,6 @@ metadata:
     app.kubernetes.io/name: kwok
   name: perf-test
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
