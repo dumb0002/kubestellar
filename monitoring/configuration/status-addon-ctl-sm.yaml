@@ -10,7 +10,7 @@ spec:
     scheme: http
   namespaceSelector:
     matchNames:
-    - %ITS%-system
+    - %ITS%
   selector:
     matchLabels:
       app: status-addon-controller
