@@ -3,7 +3,7 @@ kind: BindingPolicy
 metadata:
   name: perf-test
 spec:
-  wantSingletonReportedState: true
+  wantSingletonReportedState: false
   clusterSelectors:
   - matchLabels: {"location-group":"edge"}
   downsync:
