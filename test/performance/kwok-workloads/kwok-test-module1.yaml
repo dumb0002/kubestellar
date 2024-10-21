@@ -14,6 +14,6 @@ steps:
     ReplicasPerNamespace: {{$namespaces}}
     objectBundle:
     - basename: {{$namespaceNamePrefix}}
-      objectTemplatePath: bindingPolicy.yaml
+      objectTemplatePath: bindingPolicy-all.yaml
     - basename: {{$namespaceNamePrefix}}
       objectTemplatePath: namespace.yaml
