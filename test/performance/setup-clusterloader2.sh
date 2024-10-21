@@ -33,13 +33,20 @@ cp $SCRIPT_DIR/cleanup.sh $CL2_DIR/
 cp $SCRIPT_DIR/workloads/modules/*  $CL2_DIR/testing/load/modules
 cp $SCRIPT_DIR/workloads/performance-test-config.yaml  $CL2_DIR/testing/load
 
-if [ $env == "kind" ];then
-   cp $SCRIPT_DIR/workloads/cluster-density-k8s/*  $CL2_DIR/testing/load
+# added for kwok testing
+cp $SCRIPT_DIR/kwok-workloads/kwok-test-config.yaml  $CL2_DIR/testing/load
+cp $SCRIPT_DIR/kwok-workloads/kwok-test-module*  $CL2_DIR/testing/load/modules
+cp $SCRIPT_DIR/kwok-workloads/bindingPolicy-all.yaml  $CL2_DIR/testing/load/
+cp $SCRIPT_DIR/kwok-workloads/deployment.yaml  $CL2_DIR/testing/load/
+cp $SCRIPT_DIR/kwok-workloads/namespace.yaml  $CL2_DIR/testing/load/
 
-elif [ $env == "ocp" ];then
-   cp $SCRIPT_DIR/workloads/cluster-density-ocp/*  $CL2_DIR/testing/load
-else
-   echo "$0: unknown flag option" >&2 ;
-   echo "Usage: $0 [--env ( kind | ocp )]" >& 2
-   exit 1
-fi
+# if [ $env == "kind" ];then
+#    cp $SCRIPT_DIR/workloads/cluster-density-k8s/*  $CL2_DIR/testing/load
+
+# elif [ $env == "ocp" ];then
+#    cp $SCRIPT_DIR/workloads/cluster-density-ocp/*  $CL2_DIR/testing/load
+# else
+#    echo "$0: unknown flag option" >&2 ;
+#    echo "Usage: $0 [--env ( kind | ocp )]" >& 2
+#    exit 1
+# fi
