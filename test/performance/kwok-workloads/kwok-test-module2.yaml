@@ -1,0 +1,20 @@
+## Objects module provides a module for creating k8s objects.
+
+## Input params
+{{$actionName := .actionName}}
+{{$namespaceName := .namespaceName}}
+{{$tuningSet := .tuningSet}}
+{{$iterations:= .iterations}}
+
+steps:
+- name: "{{$actionName}} Workload k8s Objects for Namespace: {{$namespaceName}}"
+  phases: 
+  - NamespaceList: 
+    - {{$namespaceName}}
+    replicasPerNamespace: 1
+    tuningSet: {{$tuningSet}}
+    objectBundle:
+    - basename: fake-pod
+      objectTemplatePath: deployment.yaml
+      templateFillMap:
+        iterations: {{$iterations}}

@@ -1,0 +1,41 @@
+{{$namespaces := DefaultParam .namespaces 1}}
+{{$namespaceNamePrefix := DefaultParam .namespaceNamePrefix "perf-test"}}
+{{$waitTime := DefaultParam .waitTime "10s"}}
+
+name: load
+namespace:
+  number: 0
+  enableExistingNamespaces: true
+tuningSets:
+
+# ParallelismLimitedLoad does the operations as quickly as possible subject to a given
+# limit on the number running concurrently.
+- name: Sequence
+  parallelismLimitedLoad:
+    parallelismLimit: 100
+
+steps:
+- module:
+    path: modules/kwok-test-module1.yaml
+    params:
+      actionName: "Creating"
+      tuningSet: Sequence
+      namespaces: {{$namespaces}}
+      namespaceNamePrefix: {{$namespaceNamePrefix}}
+
+- name: "Wait {{$waitTime}}"
+  measurements:
+    - Identifier: Wait
+      Method: Sleep
+      Params:
+        duration: {{$waitTime}}
+
+{{range $ssIndex := Loop $namespaces}}
+- module:
+    path: modules/kwok-test-module2.yaml
+    params:
+      actionName: "Creating"
+      tuningSet: {{$tuningSet}}
+      namespaceName: {{$namespaceNamePrefix}}-{{$ssIndex}}
+      iterations: {{$ssIndex}}
+{{end}}
