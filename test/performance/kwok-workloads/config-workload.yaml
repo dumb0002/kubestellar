@@ -1,3 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/name: kwok
+  name: perf-test
+---
 apiVersion: control.kubestellar.io/v1alpha1
 kind: BindingPolicy
 metadata:
