@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../favicons/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.46">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.48">
     
     
       
@@ -3295,6 +3295,7 @@ clues about the problem.</p>
 <p>Between each release of <a href="https://github.com/kubestellar/ocm-status-addon">ks/OSA</a> and the next release of ks/ks, update the references to the ocm-status-addon release in the following files.</p>
 <ul>
 <li><code>core-chart/values.yaml</code></li>
+<li><code>monitoring/README.md</code></li>
 </ul>
 <h3 id="making-a-new-kubestellar-release">Making a new kubestellar release<a class="headerlink" href="#making-a-new-kubestellar-release" title="Permanent link">#</a></h3>
 <p>Making a new kubestellar release requires a contributor to do the following things. Here <code>$version</code> is the semver identifier for the release (e.g., <code>1.2.3-rc2</code>).</p>
@@ -3307,6 +3308,9 @@ clues about the problem.</p>
 </li>
 <li>
 <p>Update the version in the core chart defaults, <code>core-chart/values.yaml</code>.</p>
+</li>
+<li>
+<p>Update the links in scripts/create-kubestellar-demo-env.sh to point to the latest release.</p>
 </li>
 <li>
 <p>Update the version in <code>scripts/create-kubestellar-demo-env.sh</code>. Note: merging this change will cause the script to be broken until the release is made.</p>
